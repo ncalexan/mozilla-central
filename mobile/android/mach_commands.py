@@ -168,6 +168,66 @@ class ProjectCreator(MozbuildObject):
 
         return ordered
 
+    def _shorten(self, link):
+        r'''
+
+        If link starts with `topobjdir`, `topsrcdir`, or
+        `project_directory`, return a shorter textual representation.
+
+        '''
+        if link.startswith(self.topobjdir):
+            _, end = link.split(self.topobjdir)
+            if end.startswith('/'):
+                end = end[1:]
+            return os.path.join("OBJDIR", end)
+        if link.startswith(self.topsrcdir):
+            _, end = link.split(self.topsrcdir)
+            if end.startswith('/'):
+                end = end[1:]
+            return os.path.join("SRCDIR", end)
+        if link.startswith(self.project_directory):
+            _, end = link.split(self.project_directory)
+            if end.startswith('/'):
+                end = end[1:]
+            return os.path.join(self.project_name, end)
+        return link
+
+    def _update_or_create_symlink(self, src, dst):
+        r'''
+
+        Make `dst` point to `src` but don't always re-create links,
+        since that is slow.
+
+        '''
+        try:
+            existing = os.readlink(dst)
+            if os.path.abspath(existing) != src:
+                # dst exists, is a link, and is wrong
+                os.remove(dst)
+                os.symlink(src, dst)
+                message = 'Replaced link from {dst} to {src}.'
+            else:
+                message = 'Keeping existing link from {dst} to {src}.'
+        except OSError as e:
+            if e.errno == errno.EINVAL:
+                # dst exists but is not a link
+                raise Exception("Not replacing non-link '%s'" % dst)
+            elif e.errno == errno.ENOENT:
+                # dst does not exist
+                os.symlink(src, dst)
+                message = 'Creating link from {dst} to {src}.'
+            else:
+                raise e
+
+        # for logging only.
+        shortsrc = self._shorten(src)
+        shortdst = self._shorten(dst)
+
+        self.log(logging.WARN, LOG_TAG,
+                 {'src': shortsrc, 'dst': shortdst},
+                 message)
+
+
     def _create_symlinks(self, assocs):
         r'''
 
@@ -185,19 +245,13 @@ class ProjectCreator(MozbuildObject):
         count = 0
         for (src, dst) in ordered:
             self._ensureParentDir(dst)
-            try:
-                os.remove(dst)
-            except OSError as e:
-                if e.errno != errno.ENOENT:
-                    raise e
-            os.symlink(src, dst)
+
+            self._update_or_create_symlink(src, dst)
 
             count += 1
             if (count % 100 == 0):
                 self.log(logging.WARN, LOG_TAG, {'count': count, 'total': total},
                          'Created {count} of {total} symlinks.')
-            self.log(logging.WARN, LOG_TAG, {'src': src, 'dst': dst},
-                     'Last created link from {dst} to {src}.')
 
     def _jar_links(self):
         d = {}
