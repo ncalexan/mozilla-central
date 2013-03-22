@@ -175,6 +175,14 @@ VARIABLES = {
         Typically this is a set of -I flags that denote extra include
         directories to search for included .idl files.
         """),
+
+    'ANDROID_PREPROCESSED_RESOURCE_XML_FILES': (list, [],
+        """Android XML resource files that need to be preprocessed.
+
+        This is a list of filenames, e.g., ['res/xml/file.xml'].  Each
+        list item will be the preprocessed output of
+        'resources/xml/file.xml.in'].
+        """),
 }
 
 # The set of functions exposed to the sandbox.

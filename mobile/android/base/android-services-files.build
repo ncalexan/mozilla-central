@@ -1,0 +1,5 @@
+ANDROID_PREPROCESSED_RESOURCE_XML_FILES += [
+    'res/xml/sync_syncadapter.xml',
+    'res/xml/sync_options.xml',
+    'res/xml/sync_authenticator.xml',
+    ]

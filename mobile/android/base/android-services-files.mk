@@ -322,12 +322,6 @@ SYNC_RES_VALUES_LARGE_V11 := \
 SYNC_RES_XML := \
   $(NULL)
 
-SYNC_PP_RES_XML := \
-  res/xml/sync_syncadapter.xml \
-  res/xml/sync_options.xml \
-  res/xml/sync_authenticator.xml \
-  $(NULL)
-
 SYNC_THIRDPARTY_JAVA_FILES := \
   httpclientandroidlib/androidextra/HttpClientAndroidLog.java \
   httpclientandroidlib/annotation/GuardedBy.java \

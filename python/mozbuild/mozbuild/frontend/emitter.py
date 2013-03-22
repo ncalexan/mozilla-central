@@ -82,6 +82,8 @@ class TreeMetadataEmitter(object):
             passthru.variables['XPIDL_MODULE'] = sandbox['XPIDL_MODULE']
         if sandbox['XPIDL_FLAGS']:
             passthru.variables['XPIDL_FLAGS'] = sandbox['XPIDL_FLAGS']
+        if sandbox['ANDROID_PREPROCESSED_RESOURCE_XML_FILES']:
+            passthru.variables['ANDROID_PREPROCESSED_RESOURCE_XML_FILES'] = sandbox['ANDROID_PREPROCESSED_RESOURCE_XML_FILES']
 
         if passthru.variables:
             yield passthru

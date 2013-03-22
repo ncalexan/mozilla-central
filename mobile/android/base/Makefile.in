@@ -257,15 +257,6 @@ FENNEC_PP_JAVA_FILES = \
   UpdateServiceHelper.java \
   $(NULL)
 
-FENNEC_PP_XML_FILES = \
-  res/xml/preferences.xml \
-  res/xml/searchable.xml \
-  res/menu/browser_app_menu.xml \
-  res/menu-v11/browser_app_menu.xml \
-  res/menu-large-v11/browser_app_menu.xml \
-  res/menu-xlarge-v11/browser_app_menu.xml \
-  $(NULL)
-
 ifneq (,$(findstring -march=armv7,$(OS_CFLAGS)))
 MIN_CPU_VERSION=7
 else
@@ -329,8 +320,7 @@ GARBAGE += \
   gecko.ap_  \
   res/values/strings.xml \
   R.java \
-  $(FENNEC_PP_XML_FILES) \
-  $(SYNC_PP_RES_XML) \
+  $(ANDROID_PREPROCESSED_RESOURCE_XML_FILES) \
   package-name.txt \
   Manifest.java \
   javah.out \
@@ -1133,13 +1123,8 @@ jni-stubs.inc: jars/gecko-browser.jar jars/gecko-mozglue.jar jars/gecko-util.jar
 	$(JAVAH) -o javah.out -bootclasspath $(JAVA_BOOTCLASSPATH) -classpath $(subst $(NULL) $(NULL),:,$^) $(CLASSES_WITH_JNI)
 	$(PYTHON) $(topsrcdir)/mobile/android/base/jni-generator.py javah.out $@
 
-PP_RES_XML= \
-  $(SYNC_PP_RES_XML) \
-  $(FENNEC_PP_XML_FILES) \
-  $(NULL)
-
 # This is kinda awful; if any of the source files change, we remake them all.
-$(PP_RES_XML): $(patsubst res/%,$(srcdir)/resources/%.in,$(PP_RES_XML))
+$(ANDROID_PREPROCESSED_RESOURCE_XML_FILES): $(patsubst res/%,$(srcdir)/resources/%.in,$(ANDROID_PREPROCESSED_RESOURCE_XML_FILES))
 	$(PYTHON) $(topsrcdir)/config/Preprocessor.py \
              $(AUTOMATION_PPARGS) $(DEFINES) $(ACDEFINES) $(subst res/,$(srcdir)/resources/,$@).in > $@
 
@@ -1224,10 +1209,10 @@ $(RESOURCES): $(RES_DIRS) $(subst res/,$(srcdir)/resources/,$(RESOURCES))
 	$(NSINSTALL) $(subst res/,$(srcdir)/resources/,$@) $(dir $@)
 
 
-R.java: $(MOZ_APP_ICON) $(RESOURCES) $(RES_DRAWABLE) $(RES_BRANDING_DRAWABLE_MDPI) $(PP_RES_XML) res/drawable-mdpi/icon.png res/drawable-hdpi/icon.png res/drawable-xhdpi/icon.png res/drawable-xxhdpi/icon.png res/values/strings.xml AndroidManifest.xml FORCE
+R.java: $(MOZ_APP_ICON) $(RESOURCES) $(RES_DRAWABLE) $(RES_BRANDING_DRAWABLE_MDPI) $(ANDROID_PREPROCESSED_RESOURCE_XML_FILES) res/drawable-mdpi/icon.png res/drawable-hdpi/icon.png res/drawable-xhdpi/icon.png res/drawable-xxhdpi/icon.png res/values/strings.xml AndroidManifest.xml FORCE
 	$(AAPT) package -f -M AndroidManifest.xml -I $(ANDROID_SDK)/android.jar -S res -J . --custom-package org.mozilla.gecko
 
-gecko.ap_: AndroidManifest.xml res/drawable-mdpi/icon.png res/drawable-hdpi/icon.png res/drawable-xhdpi/icon.png res/drawable-xxhdpi/icon.png $(RESOURCES) $(RES_DRAWABLE) $(RES_BRANDING_DRAWABLE_MDPI) $(PP_RES_XML) res/values/strings.xml FORCE
+gecko.ap_: AndroidManifest.xml res/drawable-mdpi/icon.png res/drawable-hdpi/icon.png res/drawable-xhdpi/icon.png res/drawable-xxhdpi/icon.png $(RESOURCES) $(RES_DRAWABLE) $(RES_BRANDING_DRAWABLE_MDPI) $(ANDROID_PREPROCESSED_RESOURCE_XML_FILES) res/values/strings.xml FORCE
 	$(AAPT) package -f -M AndroidManifest.xml -I $(ANDROID_SDK)/android.jar  -S res -F $@
 
 libs:: classes.dex package-name.txt jni-stubs.inc
