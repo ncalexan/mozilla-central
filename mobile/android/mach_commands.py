@@ -21,6 +21,10 @@ from mozbuild.backend.configenvironment import (
     ConfigEnvironment,
 )
 
+from mozbuild.frontend.reader import (
+    MozbuildSandbox,
+)
+
 from mach.decorators import (
     CommandArgument,
     CommandProvider,
@@ -57,10 +61,13 @@ class ProjectCreator(MozbuildObject):
         self.project_name = project_name
         self._template_directory = template_directory
 
+        self._environment = None
+        self._mozbuild_sandbox = None
+        self._madedirs = []
+
         self.defines = self._get_defines()
         self._add_special_defines()
 
-        self._madedirs = []
         self._init_preprocessor(self.defines)
 
     @property
@@ -72,6 +79,21 @@ class ProjectCreator(MozbuildObject):
     @property
     def project_directory(self):
         return os.path.join(self.workspace_directory, self.project_name)
+
+    @property
+    def environment(self):
+        if self._environment is None:
+            config_status = os.path.join(self.topobjdir, 'config.status')
+            self._environment = ConfigEnvironment.from_config_status(config_status)
+        return self._environment
+
+    @property
+    def mozbuild_sandbox(self):
+        if self._mozbuild_sandbox is None:
+            path = os.path.join(topsrcdir, 'mobile/android/base/moz.build')
+            self._mozbuild_sandbox = MozbuildSandbox(self.environment, path)
+            self._mozbuild_sandbox.exec_file(path, True)
+        return self._mozbuild_sandbox
 
     def _init_preprocessor(self, defines):
         self.pp = Preprocessor()
@@ -305,6 +327,14 @@ class ProjectCreator(MozbuildObject):
 
         return d
 
+    def _preprocessed_xml_files(self):
+        d = {}
+        for fn in self.mozbuild_sandbox['ANDROID_PREPROCESSED_RESOURCE_XML_FILES']:
+            src = os.path.join(self.topobjdir, fn)
+            dst = os.path.join(self.project_directory, fn)
+            d[src] = dst
+        return d
+
     def _class_files(self):
         d = {}
 
@@ -318,9 +348,6 @@ class ProjectCreator(MozbuildObject):
         return d
 
     def _get_defines(self):
-        config_status = os.path.join(self.topobjdir, 'config.status')
-        environment = ConfigEnvironment.from_config_status(config_status)
-
         # Long term, prefer to white-list defines to avoid
         # cargo-culting everything.
         # defines = {}
@@ -336,11 +363,9 @@ class ProjectCreator(MozbuildObject):
         # Need to strip empty values out of config. This could upset
         # #ifdefs but we'll work that out in time.
         defines = {}
-        for key in environment.substs:
-            val = environment.substs[key]
+        for (key, val) in self.environment.substs.items():
             if val:
                 defines[key] = val
-
         return defines
 
     def _add_special_defines(self):
@@ -395,6 +420,7 @@ class ProjectCreator(MozbuildObject):
             self._class_files,
             self._branding_files,
             self._icon_files,
+            self._preprocessed_xml_files,
             ]:
             symlinks.update(f())
         return symlinks.items()
@@ -532,22 +558,3 @@ class MachCommands(MachCommandBase):
         helper.create_projects(create_links=create_links,
                                create_project_files=create_project_files,
                                **params)
-
-topsrcdir = '/Users/ncalexan/Mozilla/mozilla-inbound'
-topobjdir = '/Users/ncalexan/Mozilla/mozilla-inbound/objdir-droid'
-
-pc = ProjectCreator(topsrcdir, None, None, topobjdir=topobjdir,
-                    workspace_directory='~/Documents/workspace',
-                    project_name='FennecTest6',
-                    template_directory='~/Mozilla/mozilla-inbound/mobile/android/eclipse')
-
-from mozbuild.backend.configenvironment import ConfigEnvironment
-
-env = ConfigEnvironment(topsrcdir, topobjdir, defines=[],
-                        non_global_defines=[], substs=[])
-
-from mozbuild.frontend.reader import MozbuildSandbox
-
-path = os.path.join(topsrcdir, 'mobile/android/base/moz.build')
-sb = MozbuildSandbox(env, path)
-sb.exec_file(path, True)
