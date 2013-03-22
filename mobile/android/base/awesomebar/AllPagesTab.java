@@ -3,9 +3,29 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.gecko;
+package org.mozilla.gecko.awesomebar;
 
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mozilla.gecko.AwesomeBar.ContextMenuSubject;
+import org.mozilla.gecko.AwesomeBarTabs;
+import org.mozilla.gecko.Favicons;
+import org.mozilla.gecko.FlowLayout;
+import org.mozilla.gecko.GeckoApp;
+import org.mozilla.gecko.GeckoAppShell;
+import org.mozilla.gecko.GeckoEvent;
+import org.mozilla.gecko.GeckoTextView;
+import org.mozilla.gecko.PrefsHelper;
+import org.mozilla.gecko.R;
+import org.mozilla.gecko.SuggestClient;
+import org.mozilla.gecko.Tab;
+import org.mozilla.gecko.Tabs;
+import org.mozilla.gecko.Telemetry;
 import org.mozilla.gecko.db.BrowserContract.Combined;
 import org.mozilla.gecko.db.BrowserDB;
 import org.mozilla.gecko.db.BrowserDB.URLColumns;
@@ -31,10 +51,6 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -44,6 +60,10 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
@@ -51,10 +71,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AllPagesTab extends AwesomeBarTab implements GeckoEventListener {
     public static final String LOGTAG = "GeckoAllPagesTab";
@@ -789,11 +805,11 @@ public class AllPagesTab extends AwesomeBarTab implements GeckoEventListener {
     }
 
     private void registerEventListener(String event) {
-        GeckoAppShell.getEventDispatcher().registerEventListener(event, this);
+        GeckoAppShell.registerEventListener(event, this);
     }
 
     private void unregisterEventListener(String event) {
-        GeckoAppShell.getEventDispatcher().unregisterEventListener(event, this);
+        GeckoAppShell.unregisterEventListener(event, this);
     }
 
     private List<String> getUrlsWithoutFavicon() {
