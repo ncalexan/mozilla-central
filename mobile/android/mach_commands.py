@@ -90,7 +90,7 @@ class ProjectCreator(MozbuildObject):
     @property
     def mozbuild_sandbox(self):
         if self._mozbuild_sandbox is None:
-            path = os.path.join(topsrcdir, 'mobile/android/base/moz.build')
+            path = os.path.join(self.topsrcdir, 'mobile/android/base/moz.build')
             self._mozbuild_sandbox = MozbuildSandbox(self.environment, path)
             self._mozbuild_sandbox.exec_file(path, True)
         return self._mozbuild_sandbox
@@ -384,7 +384,7 @@ class ProjectCreator(MozbuildObject):
     def _preprocessed_xml_files(self):
         d = {}
         for fn in self.mozbuild_sandbox['ANDROID_PREPROCESSED_RESOURCE_XML_FILES']:
-            src = os.path.join(self.topobjdir, fn)
+            src = os.path.join(self.topobjdir, "mobile/android/base", fn)
             dst = os.path.join(self.project_directory, fn)
             d[src] = dst
         return d
