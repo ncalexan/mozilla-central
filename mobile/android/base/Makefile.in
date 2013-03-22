@@ -1189,19 +1189,19 @@ $(FENNEC_PP_JAVA_VIEW_FILES): GeckoView.java.frag
 	@rm -f $@
 	cat $< | sed s,@VIEWTYPE@,$(patsubst Gecko%.java,%,$@),g >> $@ ; \
 
-res/drawable-mdpi/icon.png: $(MOZ_APP_ICON)
+res/drawable-mdpi/icon.png: $(ICON_PATH)
 	$(NSINSTALL) -D res/drawable-mdpi
 	cp $(ICON_PATH) $@
 
-res/drawable-hdpi/icon.png: $(MOZ_APP_ICON)
+res/drawable-hdpi/icon.png: $(ICON_PATH_HDPI)
 	$(NSINSTALL) -D res/drawable-hdpi
 	cp $(ICON_PATH_HDPI) $@
 
-res/drawable-xhdpi/icon.png: $(MOZ_APP_ICON)
+res/drawable-xhdpi/icon.png: $(ICON_PATH_XHDPI)
 	$(NSINSTALL) -D res/drawable-xhdpi
 	cp $(ICON_PATH_XHDPI) $@
 
-res/drawable-xxhdpi/icon.png: $(MOZ_APP_ICON)
+res/drawable-xxhdpi/icon.png: $(ICON_PATH_XXHDPI)
 	$(NSINSTALL) -D res/drawable-xxhdpi
 	cp $(ICON_PATH_XXHDPI) $@
 
@@ -1223,8 +1223,7 @@ $(RESOURCES): $(RES_DIRS) $(subst res/,$(srcdir)/resources/,$(RESOURCES))
 	@echo "creating $@"
 	$(NSINSTALL) $(subst res/,$(srcdir)/resources/,$@) $(dir $@)
 
-
-R.java: $(MOZ_APP_ICON) $(RESOURCES) $(RES_DRAWABLE) $(RES_BRANDING_DRAWABLE_MDPI) $(PP_RES_XML) res/drawable-mdpi/icon.png res/drawable-hdpi/icon.png res/drawable-xhdpi/icon.png res/drawable-xxhdpi/icon.png res/values/strings.xml AndroidManifest.xml FORCE
+R.java: $(RESOURCES) $(RES_DRAWABLE) $(RES_BRANDING_DRAWABLE_MDPI) $(PP_RES_XML) res/drawable-mdpi/icon.png res/drawable-hdpi/icon.png res/drawable-xhdpi/icon.png res/drawable-xxhdpi/icon.png res/values/strings.xml AndroidManifest.xml FORCE
 	$(AAPT) package -f -M AndroidManifest.xml -I $(ANDROID_SDK)/android.jar -S res -J . --custom-package org.mozilla.gecko
 
 gecko.ap_: AndroidManifest.xml res/drawable-mdpi/icon.png res/drawable-hdpi/icon.png res/drawable-xhdpi/icon.png res/drawable-xxhdpi/icon.png $(RESOURCES) $(RES_DRAWABLE) $(RES_BRANDING_DRAWABLE_MDPI) $(PP_RES_XML) res/values/strings.xml FORCE
