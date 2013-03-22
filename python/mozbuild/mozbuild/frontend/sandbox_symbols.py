@@ -481,6 +481,14 @@ VARIABLES = {
     'XPCSHELL_TESTS_MANIFESTS': (StrictOrderingOnAppendList, list, [],
         """List of manifest files defining xpcshell tests.
         """),
+
+    'ANDROID_PREPROCESSED_RESOURCE_XML_FILES': (StrictOrderingOnAppendList, list, [],
+        """Android XML resource files that need to be preprocessed.
+
+        This is a list of filenames, e.g., ['res/xml/file.xml'].  Each
+        list item will be the preprocessed output of
+        'resources/xml/file.xml.in'].
+        """),
 }
 
 # The set of functions exposed to the sandbox.

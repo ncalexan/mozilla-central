@@ -318,12 +318,6 @@ FENNEC_PP_JAVA_FILES = \
   WebApps.java \
   $(NULL)
 
-FENNEC_PP_XML_FILES = \
-  res/xml/preferences.xml \
-  res/xml/preferences_customize.xml \
-  res/xml/searchable.xml \
-  $(NULL)
-
 ifneq (,$(findstring -march=armv7,$(OS_CFLAGS)))
 MIN_CPU_VERSION=7
 else
@@ -400,8 +394,7 @@ GARBAGE += \
   gecko.ap_  \
   res/values/strings.xml \
   R.java \
-  $(FENNEC_PP_XML_FILES) \
-  $(SYNC_PP_RES_XML) \
+  $(ANDROID_PREPROCESSED_RESOURCE_XML_FILES) \
   package-name.txt \
   fennec_ids.txt \
   Manifest.java \
@@ -1329,13 +1322,8 @@ GeneratedJNIWrappers.cpp: jars/gecko-browser.jar jars/gecko-mozglue.jar jars/gec
 	$(JAVAC) $(addprefix $(topsrcdir)/,$(ANNOTATION_PROCESSOR_JAVA_FILES)) -d $(CURDIR)
 	$(JAVA) -classpath $(JAVA_BOOTCLASSPATH):$(CURDIR) org.mozilla.gecko.annotationProcessors.AnnotationProcessor $^
 
-PP_RES_XML= \
-  $(SYNC_PP_RES_XML) \
-  $(FENNEC_PP_XML_FILES) \
-  $(NULL)
-
 # This is kinda awful; if any of the source files change, we remake them all.
-$(PP_RES_XML): $(patsubst res/%,$(srcdir)/resources/%.in,$(PP_RES_XML))
+$(ANDROID_PREPROCESSED_RESOURCE_XML_FILES): $(patsubst res/%,$(srcdir)/resources/%.in,$(ANDROID_PREPROCESSED_RESOURCE_XML_FILES))
 	$(PYTHON) $(topsrcdir)/config/Preprocessor.py \
              $(AUTOMATION_PPARGS) $(DEFINES) $(ACDEFINES) $(subst res/,$(srcdir)/resources/,$@).in > $@
 
@@ -1425,7 +1413,7 @@ all_resources = \
   $(MULTILOCALE_STRINGS_XML_FILES) \
   AndroidManifest.xml \
   $(RESOURCES) \
-  $(PP_RES_XML) \
+  $(ANDROID_PREPROCESSED_RESOURCE_XML_FILES) \
   $(NULL)
 
 R.java: $(all_resources)

@@ -57,9 +57,6 @@ class ProjectCreator(MozbuildObject):
         self.project_name = project_name
         self._template_directory = template_directory
 
-        self.defines = self._get_defines()
-        self._add_special_defines()
-
         self._madedirs = []
         self._init_preprocessor(self.defines)
 
@@ -317,57 +314,6 @@ class ProjectCreator(MozbuildObject):
 
         return d
 
-    def _get_defines(self):
-        config_status = os.path.join(self.topobjdir, 'config.status')
-        environment = ConfigEnvironment.from_config_status(config_status)
-
-        # Long term, prefer to white-list defines to avoid
-        # cargo-culting everything.
-        # defines = {}
-        # defines_list = ['MOZ_BUILD_APP',
-        #                 'MOZ_APP_VERSION',
-        #                 'MOZ_UPDATE_CHANNEL',
-        #                 'ANDROID_COMPAT_LIB',
-        #                 'ANDROID_CPU_ARCH',
-        #                 'ANDROID_PACKAGE_NAME']
-        # for define in defines_list:
-        #     defines[define] = environment.substs[define]
-
-        # Need to strip empty values out of config. This could upset
-        # #ifdefs but we'll work that out in time.
-        defines = {}
-        for key in environment.substs:
-            val = environment.substs[key]
-            if val:
-                defines[key] = val
-
-        return defines
-
-    def _add_special_defines(self):
-        '''Defines that make *me* feel /special/.
-
-        Updates `self.defines` in-place -- sorry.
-
-        We should transition these to config.status defines ASAP.
-        '''
-        self.defines['_REPLACE_PACKAGE_DIR'] = self.defines['ANDROID_PACKAGE_NAME'].replace('.', '/')
-        self.defines['_REPLACE_APP_NAME'] = self.project_name
-        self.defines['_PACKAGE_NAME_'] = self.defines['ANDROID_PACKAGE_NAME']
-        self.defines['_REPLACE_OBJ_PROJECT_PATH'] = os.path.join(self.topobjdir, "mobile/android/base")
-        self.defines['_REPLACE_OBJ_PATH'] = self.topobjdir
-        self.defines['_REPLACE_PROJECT_NAME'] = self.project_name
-        self.defines['_REPLACE_MOZ_SRC_DIR'] = self.topsrcdir
-        self.defines['_REPLACE_PACKAGE_NAME'] = self.defines['ANDROID_PACKAGE_NAME']
-
-        self.defines['MOZ_CHILD_PROCESS_NAME'] = 'lib/libplugin-container.so'
-        self.defines['MOZ_MIN_CPU_VERSION'] = '0'
-        self.defines['MOZ_BUILD_TIMESTAMP'] = '0'
-        self.defines['MOZ_APP_BUILDID'] = open(os.path.join(self.topobjdir, "config", "buildid"), 'rt').readline().strip()
-        self.defines['MOZ_ANDROID_SHARED_ACCOUNT_TYPE'] = self.defines['ANDROID_PACKAGE_NAME'] + "_sync"
-        self.defines['MOZ_APP_ABI'] = self.defines['TARGET_XPCOM_ABI']
-        self.defines['MANGLED_ANDROID_PACKAGE_NAME'] = self.defines['ANDROID_PACKAGE_NAME'].replace('fennec', 'f3nn3c')
-        self.defines['OBJDIR'] = os.path.join(self.topobjdir, "mobile", "android", "base")
-
     def _java_in_preprocess_files(self):
         d = {}
         for fn in self._find(True, "mobile/android/base", "*.java.in"):
@@ -505,7 +451,7 @@ class ProjectCreator(MozbuildObject):
 
 @CommandProvider
 class MachCommands(MachCommandBase):
-    @Command('eclipsify', help='Create Eclipse projects for Fennec.')
+    @Command('eclipsify', description='Create Eclipse projects for Fennec.', category='devenv')
     @CommandArgument('--workspace', '-w',
                      help='Eclipse workspace directory.')
     @CommandArgument('--project', '-p', default='FennecTest',
@@ -533,22 +479,22 @@ class MachCommands(MachCommandBase):
                                create_project_files=create_project_files,
                                **params)
 
-topsrcdir = '/Users/ncalexan/Mozilla/mozilla-inbound'
-topobjdir = '/Users/ncalexan/Mozilla/mozilla-inbound/objdir-droid'
+# topsrcdir = '/Users/ncalexan/Mozilla/mozilla-inbound'
+# topobjdir = '/Users/ncalexan/Mozilla/mozilla-inbound/objdir-droid'
 
-pc = ProjectCreator(topsrcdir, None, None, topobjdir=topobjdir,
-                    workspace_directory='~/Documents/workspace',
-                    project_name='FennecTest6',
-                    template_directory='~/Mozilla/mozilla-inbound/mobile/android/eclipse')
+# pc = ProjectCreator(topsrcdir, None, None, topobjdir=topobjdir,
+#                     workspace_directory='~/Documents/workspace',
+#                     project_name='FennecTest6',
+#                     template_directory='~/Mozilla/mozilla-inbound/mobile/android/eclipse')
 
-from mozbuild.backend.configenvironment import ConfigEnvironment
+# from mozbuild.backend.configenvironment import ConfigEnvironment
 
-env = ConfigEnvironment(topsrcdir, topobjdir, defines=[],
-                        non_global_defines=[], substs=[])
+# env = ConfigEnvironment(topsrcdir, topobjdir, defines=[],
+#                         non_global_defines=[], substs=[])
 
-from mozbuild.frontend.reader import MozbuildSandbox
+# from mozbuild.frontend.reader import MozbuildSandbox
 
-path = os.path.join(topsrcdir, 'mobile/android/base/moz.build')
-sb = MozbuildSandbox(env, path)
-sb.exec_file(path, True)
+# path = os.path.join(topsrcdir, 'mobile/android/base/moz.build')
+# sb = MozbuildSandbox(env, path)
+# sb.exec_file(path, True)
 
