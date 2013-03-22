@@ -21,6 +21,10 @@ from mozbuild.backend.configenvironment import (
     ConfigEnvironment,
 )
 
+from mozbuild.frontend.reader import (
+    MozbuildSandbox,
+)
+
 from mach.decorators import (
     CommandArgument,
     CommandProvider,
@@ -56,7 +60,8 @@ class ProjectCreator(MozbuildObject):
         self.workspace_directory = os.path.abspath(os.path.expanduser(workspace_directory))
         self.project_name = project_name
         self._template_directory = template_directory
-
+        self._environment = None
+        self._mozbuild_sandbox = None
         self._madedirs = []
         self._init_preprocessor(self.defines)
 
@@ -69,6 +74,21 @@ class ProjectCreator(MozbuildObject):
     @property
     def project_directory(self):
         return os.path.join(self.workspace_directory, self.project_name)
+
+    @property
+    def environment(self):
+        if self._environment is None:
+            config_status = os.path.join(self.topobjdir, 'config.status')
+            self._environment = ConfigEnvironment.from_config_status(config_status)
+        return self._environment
+
+    @property
+    def mozbuild_sandbox(self):
+        if self._mozbuild_sandbox is None:
+            path = os.path.join(topsrcdir, 'mobile/android/base/moz.build')
+            self._mozbuild_sandbox = MozbuildSandbox(self.environment, path)
+            self._mozbuild_sandbox.exec_file(path, True)
+        return self._mozbuild_sandbox
 
     def _init_preprocessor(self, defines):
         self.pp = Preprocessor()
@@ -302,6 +322,14 @@ class ProjectCreator(MozbuildObject):
 
         return d
 
+    def _preprocessed_xml_files(self):
+        d = {}
+        for fn in self.mozbuild_sandbox['ANDROID_PREPROCESSED_RESOURCE_XML_FILES']:
+            src = os.path.join(self.topobjdir, fn)
+            dst = os.path.join(self.project_directory, fn)
+            d[src] = dst
+        return d
+
     def _class_files(self):
         d = {}
 
@@ -341,6 +369,7 @@ class ProjectCreator(MozbuildObject):
             self._class_files,
             self._branding_files,
             self._icon_files,
+            self._preprocessed_xml_files,
             ]:
             symlinks.update(f())
         return symlinks.items()
