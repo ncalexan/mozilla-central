@@ -10,7 +10,7 @@
             <solid android:color="#000000"/>
         </shape>
     </item>
-
+<!--
     <item android:drawable="@drawable/tabs_button_tail"/>
-
+ -->
 </layer-list>
