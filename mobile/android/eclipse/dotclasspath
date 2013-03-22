@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry excluding="org/mozilla/gecko/sync/" including="org/mozilla/gecko/|@_REPLACE_PACKAGE_DIR@/" kind="src" path="src"/>
+	<classpathentry kind="lib" path="jars/android-support-v4.jar"/>
+	<classpathentry kind="lib" path="jars/gecko-browser.jar"/>
+	<classpathentry kind="lib" path="jars/robotium-solo-3.6.jar"/>
+	<classpathentry kind="lib" path="jars/sync-thirdparty.jar"/>
+	<classpathentry kind="lib" path="classes/robocop"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>
