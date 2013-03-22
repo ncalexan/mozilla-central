@@ -27,6 +27,7 @@ SEARCH_PATHS = [
     'testing/mozbase/mozprocess',
     'testing/mozbase/mozfile',
     'testing/mozbase/mozinfo',
+    'config',
 ]
 
 # Individual files providing mach commands.
@@ -41,6 +42,7 @@ MACH_MODULES = [
     'testing/mochitest/mach_commands.py',
     'testing/xpcshell/mach_commands.py',
     'tools/mach_commands.py',
+    'mobile/android/mach_commands.py',
 ]
 
 def bootstrap(topsrcdir, mozilla_dir=None):
