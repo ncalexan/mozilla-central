@@ -517,12 +517,18 @@ class ProjectCreator(MozbuildObject):
             self._preprocess(os.path.join(self.template_directory, fn),
                              os.path.join(self.project_directory, fns[fn]))
 
-        # The path '.externalToolBuilders' is standard and hard to change,
-        # so let's leave it.
+        # Special case 'App.launch'.  The path '.externalToolBuilders'
+        # is standard and hard to change, so let's leave it.
         for fn in self._find(True, self.template_directory, "*.launch"):
             bn = os.path.basename(fn)
+            if bn in ["App.launch"]:
+                continue
+
             dst = os.path.join(self.project_directory, ".externalToolBuilders", bn)
             self._preprocess(fn, dst)
+
+        self._preprocess(os.path.join(self.template_directory, "App.launch"),
+                         os.path.join(self.project_directory, ".settings", "App.launch"))
 
         self._preprocess(os.path.join(self.template_directory, "org.eclipse.jdt.core.prefs"),
                          os.path.join(self.project_directory, ".settings", "org.eclipse.jdt.core.prefs"))
