@@ -19,6 +19,9 @@ from __future__ import unicode_literals
 
 from collections import OrderedDict
 
+from android import (
+    AndroidPackageData,
+)
 
 def doc_to_paragraphs(doc):
     """Take a documentation string and converts it to paragraphs.
@@ -174,6 +177,17 @@ VARIABLES = {
         This is a list of extra flags that are passed to the IDL compiler.
         Typically this is a set of -I flags that denote extra include
         directories to search for included .idl files.
+        """),
+
+    'ANDROID_PACKAGE': (AndroidPackageData, AndroidPackageData(),
+        """Android Package data.
+
+        This dumb container type encapsulates data needed to build an
+        Android APK file.  This includes resources (including branding
+        and preprocessed resources).
+
+        See the member variables of `AndroidPackageData` for more
+        information.
         """),
 }
 

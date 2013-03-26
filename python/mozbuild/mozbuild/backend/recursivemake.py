@@ -10,11 +10,17 @@ import os
 import types
 
 from .base import BuildBackend
+from .android import (
+    AndroidPackageMakefileFragment,
+)
 from ..frontend.data import (
     ConfigFileSubstitution,
     DirectoryTraversal,
     SandboxDerived,
     VariablePassthru,
+)
+from ..frontend.android import (
+    AndroidPackage,
 )
 from ..util import FileAvoidWrite
 
@@ -209,6 +215,9 @@ class RecursiveMakeBackend(BuildBackend):
 
                 else:
                     backend_file.write('%s := %s\n' % (k, v))
+        elif isinstance(obj, AndroidPackage):
+            fragment = AndroidPackageMakefileFragment(obj.package)
+            fragment.write(backend_file)
 
         self._backend_files[obj.srcdir] = backend_file
 

@@ -13,6 +13,10 @@ from .data import (
     ReaderSummary,
 )
 
+from .android import (
+    AndroidPackage,
+)
+
 from .reader import MozbuildSandbox
 
 
@@ -85,6 +89,9 @@ class TreeMetadataEmitter(object):
 
         if passthru.variables:
             yield passthru
+
+        if 'ANDROID_PACKAGE' in sandbox:
+            yield AndroidPackage(sandbox, package=sandbox['ANDROID_PACKAGE'])
 
     def _emit_directory_traversal_from_sandbox(self, sandbox):
         o = DirectoryTraversal(sandbox)

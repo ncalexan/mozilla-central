@@ -1,0 +1,45 @@
+# vim: set filetype=python:
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+ANDROID_PACKAGE.add_preprocessed_resources([
+    'res/xml/sync_syncadapter.xml',
+    'res/xml/sync_options.xml',
+    'res/xml/sync_authenticator.xml',
+])
+
+ANDROID_PACKAGE.add_resources([
+    'res/drawable/pin_background.xml',
+])
+
+ANDROID_PACKAGE.add_resources([
+    'res/drawable-mdpi/desktop.png',
+    'res/drawable-mdpi/mobile.png',
+])
+
+ANDROID_PACKAGE.add_resources([
+    'res/layout/sync_account.xml',
+    'res/layout/sync_list_item.xml',
+    'res/layout/sync_redirect_to_setup.xml',
+    'res/layout/sync_send_tab.xml',
+    'res/layout/sync_setup.xml',
+    'res/layout/sync_setup_failure.xml',
+    'res/layout/sync_setup_jpake_waiting.xml',
+    'res/layout/sync_setup_nointernet.xml',
+    'res/layout/sync_setup_pair.xml',
+    'res/layout/sync_setup_success.xml',
+    'res/layout/sync_setup_webview.xml',
+])
+
+ANDROID_PACKAGE.add_resources([
+    'res/values/sync_styles.xml',
+])
+
+ANDROID_PACKAGE.add_resources([
+    'res/values-v11/sync_styles.xml',
+])
+
+ANDROID_PACKAGE.add_resources([
+    'res/values-large-v11/sync_styles.xml',
+])

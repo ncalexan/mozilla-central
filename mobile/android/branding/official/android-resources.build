@@ -1,0 +1,23 @@
+ANDROID_PACKAGE.add_external_resource(
+    'mobile/android/branding/official/content/fennec_48x48.png',
+    'res/drawable-mdpi/icon.png')
+
+ANDROID_PACKAGE.add_external_resource(
+    'mobile/android/branding/official/content/fennec_72x72.png',
+    'res/drawable-hdpi/icon.png')
+
+ANDROID_PACKAGE.add_external_resource(
+    'mobile/android/branding/official/content/fennec_96x96.png',
+    'res/drawable-xhdpi/icon.png')
+
+ANDROID_PACKAGE.add_external_resource(
+    'mobile/android/branding/official/content/fennec_144x144.png',
+    'res/drawable-xxhdpi/icon.png')
+
+ANDROID_PACKAGE.add_external_resource(
+    'mobile/android/branding/official/content/favicon32.png',
+    'res/drawable-mdpi/favicon32.png')
+
+ANDROID_PACKAGE.add_external_resource(
+    'mobile/android/branding/official/content/logo.png',
+    'res/drawable-mdpi/logo.png')
