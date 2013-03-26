@@ -528,7 +528,7 @@ class ProjectCreator(MozbuildObject):
             self._preprocess(fn, dst)
 
         self._preprocess(os.path.join(self.template_directory, "App.launch"),
-                         os.path.join(self.project_directory, ".settings", "App.launch"))
+                         os.path.join(self.project_directory, ".settings", self.project_name + ".launch"))
 
         self._preprocess(os.path.join(self.template_directory, "org.eclipse.jdt.core.prefs"),
                          os.path.join(self.project_directory, ".settings", "org.eclipse.jdt.core.prefs"))
