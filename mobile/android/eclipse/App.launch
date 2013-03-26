@@ -16,6 +16,10 @@
 <listEntry value="4"/>
 <listEntry value="1"/>
 </listAttribute>
+<mapAttribute key="org.eclipse.debug.core.preferred_launchers">
+<mapEntry key="[debug]" value="org.mozilla.ide.eclipse.fennec.FennecLauncher"/>
+<mapEntry key="[run]" value="org.mozilla.ide.eclipse.fennec.FennecLauncher"/>
+</mapAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.ALLOW_TERMINATE" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="@_REPLACE_APP_NAME@"/>
 </launchConfiguration>

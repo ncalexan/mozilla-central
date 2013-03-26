@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="jars/robotium-solo-3.6.jar"/>
 	<classpathentry kind="lib" path="jars/sync-thirdparty.jar"/>
 	<classpathentry kind="lib" path="classes/robocop"/>
+    <classpathentry kind="src" path="gen"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

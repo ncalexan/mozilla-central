@@ -389,18 +389,6 @@ class ProjectCreator(MozbuildObject):
             d[src] = dst
         return d
 
-    def _class_files(self):
-        d = {}
-
-        p = os.path.join(self.project_directory, "bin", "classes",
-                         "org", "mozilla", "gecko")
-        for fn in self._find(False, "mobile/android/base", "*.class"):
-            src = os.path.join(self.topobjdir, fn)
-            dst = os.path.join(p, relpath(fn, "mobile/android/base"))
-            d[src] = dst
-
-        return d
-
     def _get_defines(self):
         # Long term, prefer to white-list defines to avoid
         # cargo-culting everything.
@@ -471,7 +459,6 @@ class ProjectCreator(MozbuildObject):
             self._android_compatibility_links,
             self._source_files,
             self._resource_files,
-            self._class_files,
             self._branding_files,
             self._icon_files,
             self._preprocessed_xml_files,
@@ -504,30 +491,9 @@ class ProjectCreator(MozbuildObject):
         dst = os.path.join(self.project_directory, "AndroidManifest.xml")
         symlinks.append((src, dst))
 
-        # Needed to avoid "AndroidManifest.xml file missing!" during packaging.
-        src = os.path.join(self.topobjdir, "mobile", "android", "base", "AndroidManifest.xml")
-        dst = os.path.join(self.project_directory, "bin", "AndroidManifest.xml")
-        symlinks.append((src, dst))
-
         # special case strings.xml
         src = os.path.join(self.topobjdir, "mobile", "android", "base", "res", "values", "strings.xml")
         dst = os.path.join(self.project_directory, "res", "values", "strings.xml")
-        symlinks.append((src, dst))
-
-        # The name 'resources.ap_' is hard-coded in ADT: see identifier
-        # FN_RESOURCES_AP_ in
-        # android-sdk/eclipse/plugins/com.android.ide.eclipse.adt/src/com/android/ide/eclipse/adt/AdtConstants.java
-        src = os.path.join(self.topobjdir, "mobile", "android", "base", "gecko.ap_")
-        dst = os.path.join(self.project_directory, "bin", "resources.ap_")
-        symlinks.append((src, dst))
-
-        src = os.path.join(self.topobjdir, "mobile", "android", "base", "classes.dex")
-        dst = os.path.join(self.project_directory, "bin", "classes.dex")
-        symlinks.append((src, dst))
-
-        # There should only be one 'fennec*apk' in our dist/ dir.
-        (src, ) = self._find(False, self.distdir, "%s*.apk" % self.defines['MOZ_APP_NAME'])
-        dst = os.path.join(self.project_directory, "bin", "App.apk")
         symlinks.append((src, dst))
 
         return symlinks
