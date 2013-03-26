@@ -533,6 +533,9 @@ class ProjectCreator(MozbuildObject):
         self._preprocess(os.path.join(self.template_directory, "org.eclipse.jdt.core.prefs"),
                          os.path.join(self.project_directory, ".settings", "org.eclipse.jdt.core.prefs"))
 
+        self._preprocess(os.path.join(self.template_directory, "org.mozilla.ide.eclipse.fennec.prefs"),
+                         os.path.join(self.project_directory, ".settings", "org.mozilla.ide.eclipse.fennec.prefs"))
+
         self._preprocess(os.path.join(self.template_directory, "save-actions.pl"),
                          os.path.join(self.project_directory, "scripts", "save-actions.pl"))
 
