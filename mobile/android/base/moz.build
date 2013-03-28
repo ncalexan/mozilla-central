@@ -7,16 +7,24 @@ DIRS += ['locales']
 
 include('android-services-files.build')
 
-ANDROID_PACKAGE.add_preprocessed_resources([
+# Preprocessed resources: output `res/path/file` is preprocessed from
+# input `resources/path/file.in`.  Items in this list are output
+# targets.  Order does not matter.
+ANDROID_PACKAGE.add_preprocessed_resources(
     'res/xml/preferences.xml',
     'res/xml/searchable.xml',
     'res/menu/browser_app_menu.xml',
     'res/menu-v11/browser_app_menu.xml',
     'res/menu-large-v11/browser_app_menu.xml',
     'res/menu-xlarge-v11/browser_app_menu.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+# Resources: output `res/path/file` is installed from
+# `resources/path/file`.  Items in this list are output targets.
+# Order does not matter.  The only semantic grouping for Android
+# resources is by output directory (like `res/values`), which can be
+# recovered from the filenames, so grouping here is only convention.
+ANDROID_PACKAGE.add_resources(
     'res/layout/abouthome_content.xml',
     'res/layout/autocomplete_list.xml',
     'res/layout/autocomplete_list_item.xml',
@@ -77,38 +85,38 @@ ANDROID_PACKAGE.add_resources([
     'res/layout/abouthome_topsite_item.xml',
     'res/layout/validation_message.xml',
     'res/layout/videoplayer.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/layout-land-v14/browser_toolbar.xml',
     'res/layout-land-v14/browser_toolbar_menu.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/layout-large-v11/awesomebar_search.xml',
     'res/layout-large-v11/browser_toolbar_menu.xml',
     'res/layout-large-v11/doorhangerpopup.xml',
     'res/layout-large-v11/site_identity_popup.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/layout-large-land-v11/tabs_panel.xml',
     'res/layout-large-land-v11/tabs_panel_header.xml',
     'res/layout-large-land-v11/tabs_panel_footer.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/layout-xlarge-v11/awesomebar_search.xml',
     'res/layout-xlarge-v11/font_size_preference.xml',
     'res/layout-xlarge-v11/remote_tabs_child.xml',
     'res/layout-xlarge-v11/remote_tabs_group.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/layout-xlarge-land-v11/abouthome_content.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/values/attrs.xml',
     'res/values/arrays.xml',
     'res/values/colors.xml',
@@ -117,58 +125,58 @@ ANDROID_PACKAGE.add_resources([
     'res/values/layout.xml',
     'res/values/styles.xml',
     'res/values/themes.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/values-land/integers.xml',
     'res/values-land/layout.xml',
     'res/values-land/styles.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/values-v11/colors.xml',
     'res/values-v11/dimens.xml',
     'res/values-v11/styles.xml',
     'res/values-v11/themes.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/values-large-v11/dimens.xml',
     'res/values-large-v11/layout.xml',
     'res/values-large-v11/styles.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/values-large-land-v11/styles.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/values-xlarge-v11/dimens.xml',
     'res/values-xlarge-v11/integers.xml',
     'res/values-xlarge-v11/styles.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/values-land-v14/dimens.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/values-v14/styles.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
-])
+ANDROID_PACKAGE.add_resources(
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/anim/awesomebar_fade_in.xml',
     'res/anim/awesomebar_fade_out.xml',
     'res/anim/awesomebar_hold_still.xml',
     'res/anim/grow_fade_in.xml',
     'res/anim/grow_fade_in_center.xml',
     'res/anim/shrink_fade_out.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-mdpi/blank.png',
     'res/drawable-mdpi/favicon.png',
     'res/drawable-mdpi/folder.png',
@@ -271,12 +279,12 @@ ANDROID_PACKAGE.add_resources([
     'res/drawable-mdpi/shadow.png',
     'res/drawable-mdpi/start.png',
     'res/drawable-mdpi/marketplace.png',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
-])
+ANDROID_PACKAGE.add_resources(
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-hdpi/blank.png',
     'res/drawable-hdpi/favicon.png',
     'res/drawable-hdpi/folder.png',
@@ -361,9 +369,9 @@ ANDROID_PACKAGE.add_resources([
     'res/drawable-hdpi/handle_end.png',
     'res/drawable-hdpi/handle_middle.png',
     'res/drawable-hdpi/handle_start.png',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-xhdpi/blank.png',
     'res/drawable-xhdpi/favicon.png',
     'res/drawable-xhdpi/folder.png',
@@ -446,9 +454,9 @@ ANDROID_PACKAGE.add_resources([
     'res/drawable-xhdpi/handle_end.png',
     'res/drawable-xhdpi/handle_middle.png',
     'res/drawable-xhdpi/handle_start.png',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-mdpi-v11/alert_addon.png',
     'res/drawable-mdpi-v11/alert_app.png',
     'res/drawable-mdpi-v11/alert_download.png',
@@ -471,9 +479,9 @@ ANDROID_PACKAGE.add_resources([
     'res/drawable-mdpi-v11/ic_menu_tools.png',
     'res/drawable-mdpi-v11/ic_menu_quit.png',
     'res/drawable-mdpi-v11/ic_status_logo.png',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-hdpi-v11/alert_addon.png',
     'res/drawable-hdpi-v11/alert_app.png',
     'res/drawable-hdpi-v11/alert_download.png',
@@ -496,9 +504,9 @@ ANDROID_PACKAGE.add_resources([
     'res/drawable-hdpi-v11/ic_menu_tools.png',
     'res/drawable-hdpi-v11/ic_menu_quit.png',
     'res/drawable-hdpi-v11/ic_status_logo.png',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-xhdpi-v11/alert_addon.png',
     'res/drawable-xhdpi-v11/alert_app.png',
     'res/drawable-xhdpi-v11/alert_download.png',
@@ -521,26 +529,26 @@ ANDROID_PACKAGE.add_resources([
     'res/drawable-xhdpi-v11/ic_menu_tools.png',
     'res/drawable-xhdpi-v11/ic_menu_quit.png',
     'res/drawable-xhdpi-v11/ic_status_logo.png',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-land-mdpi-v14/tabs_carat.png',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-land-hdpi-v14/tabs_carat.png',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-land-xhdpi-v14/tabs_carat.png',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-large-land-v11/tabs_button.xml',
     'res/drawable-large-land-v11/tabs_level.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-large-mdpi-v11/doorhanger_popup_bg.9.png',
     'res/drawable-large-mdpi-v11/ic_menu_reload.png',
     'res/drawable-large-mdpi-v11/ic_menu_forward.png',
@@ -548,9 +556,9 @@ ANDROID_PACKAGE.add_resources([
     'res/drawable-large-mdpi-v11/tabs_carat.png',
     'res/drawable-large-mdpi-v11/tabs_carat_contracted.png',
     'res/drawable-large-mdpi-v11/tabs_carat_expanded.png',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-large-hdpi-v11/doorhanger_popup_bg.9.png',
     'res/drawable-large-hdpi-v11/ic_menu_reload.png',
     'res/drawable-large-hdpi-v11/ic_menu_forward.png',
@@ -558,9 +566,9 @@ ANDROID_PACKAGE.add_resources([
     'res/drawable-large-hdpi-v11/tabs_carat.png',
     'res/drawable-large-hdpi-v11/tabs_carat_contracted.png',
     'res/drawable-large-hdpi-v11/tabs_carat_expanded.png',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-large-xhdpi-v11/doorhanger_popup_bg.9.png',
     'res/drawable-large-xhdpi-v11/ic_menu_reload.png',
     'res/drawable-large-xhdpi-v11/ic_menu_forward.png',
@@ -568,9 +576,9 @@ ANDROID_PACKAGE.add_resources([
     'res/drawable-large-xhdpi-v11/tabs_carat.png',
     'res/drawable-large-xhdpi-v11/tabs_carat_contracted.png',
     'res/drawable-large-xhdpi-v11/tabs_carat_expanded.png',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-xlarge-mdpi-v11/awesomebar_tab_center.9.png',
     'res/drawable-xlarge-mdpi-v11/awesomebar_tab_left.9.png',
     'res/drawable-xlarge-mdpi-v11/awesomebar_tab_right.9.png',
@@ -578,9 +586,9 @@ ANDROID_PACKAGE.add_resources([
     'res/drawable-xlarge-mdpi-v11/awesomebar_sep_right.9.png',
     'res/drawable-xlarge-mdpi-v11/ic_menu_bookmark_add.png',
     'res/drawable-xlarge-mdpi-v11/ic_menu_bookmark_remove.png',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-xlarge-hdpi-v11/awesomebar_tab_center.9.png',
     'res/drawable-xlarge-hdpi-v11/awesomebar_tab_left.9.png',
     'res/drawable-xlarge-hdpi-v11/awesomebar_tab_right.9.png',
@@ -588,9 +596,9 @@ ANDROID_PACKAGE.add_resources([
     'res/drawable-xlarge-hdpi-v11/awesomebar_sep_right.9.png',
     'res/drawable-xlarge-hdpi-v11/ic_menu_bookmark_add.png',
     'res/drawable-xlarge-hdpi-v11/ic_menu_bookmark_remove.png',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable-xlarge-xhdpi-v11/awesomebar_tab_center.9.png',
     'res/drawable-xlarge-xhdpi-v11/awesomebar_tab_left.9.png',
     'res/drawable-xlarge-xhdpi-v11/awesomebar_tab_right.9.png',
@@ -598,9 +606,9 @@ ANDROID_PACKAGE.add_resources([
     'res/drawable-xlarge-xhdpi-v11/awesomebar_sep_right.9.png',
     'res/drawable-xlarge-xhdpi-v11/ic_menu_bookmark_add.png',
     'res/drawable-xlarge-xhdpi-v11/ic_menu_bookmark_remove.png',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/color/abouthome_section_more_text.xml',
     'res/color/abouthome_section_subtitle.xml',
     'res/color/abouthome_section_title.xml',
@@ -608,22 +616,16 @@ ANDROID_PACKAGE.add_resources([
     'res/color/awesome_bar_title_hint.xml',
     'res/color/menu_item_title.xml',
     'res/color/select_item_multichoice.xml',
-])
+)
 
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/menu/awesomebar_contextmenu.xml',
     'res/menu/gecko_app_menu.xml',
     'res/menu/titlebar_contextmenu.xml',
     'res/menu/abouthome_topsites_contextmenu.xml',
-])
+)
 
-if CONFIG['MOZ_CRASHREPORTER']:
-    ANDROID_PACKAGE.add_resources([
-        'res/drawable-mdpi/crash_reporter.png',
-        'res/layout/crash_reporter.xml',
-    ])
-
-ANDROID_PACKAGE.add_resources([
+ANDROID_PACKAGE.add_resources(
     'res/drawable/abouthome_logo.xml',
     'res/drawable/abouthome_promo_box.xml',
     'res/drawable/action_bar_button.xml',
@@ -658,6 +660,13 @@ ANDROID_PACKAGE.add_resources([
     'res/drawable/tabs_level.xml',
     'res/drawable/tabs_panel_indicator.xml',
     'res/drawable/webapp_titlebar_bg.xml',
-])
+)
 
-include('/%s/android-resources.build' % CONFIG['MOZ_BRANDING_DIRECTORY'])
+if CONFIG['MOZ_CRASHREPORTER']:
+    ANDROID_PACKAGE.add_resources(
+        'res/drawable-mdpi/crash_reporter.png',
+        'res/layout/crash_reporter.xml',
+    )
+
+# Branding resources from mobile/android/branding.
+include('/mobile/android/branding/android-resources.build')
