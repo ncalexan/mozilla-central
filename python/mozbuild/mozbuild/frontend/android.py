@@ -12,7 +12,7 @@ from data import (
 )
 
 
-class AndroidPackageData(TreeMetadata):
+class AndroidPackageData(object):
     """
     A dumb container describing an Android Package.
 
@@ -25,39 +25,56 @@ class AndroidPackageData(TreeMetadata):
     External resources are those outside of the source directory
     describing the package -- usually, these are branding resources.
     """
-    def __init__(self):
+    __slots__ = (
+        'resources',
+        'preprocessed_resources',
+        'external_resources',
+        '_input_base',
+        '_output_base',
+    )
+
+    def __init__(self, input_base='res/', output_base='res/'):
+        """
+        Sane Android packages copy resources from `$(SRCDIR)/res` to
+        $(OBJDIR)/res`.  Fennec copies resources from
+        `$(SRCDIR)/resources` to `$(OBJDIR)/res`.
+
+        * `input_base`: copy resources from `$(SRCDIR)/input_base`
+        * `output_base`: copy resources to `$(OBJDIR)/output_base`
+        """
+        self._input_base = input_base
+        self._output_base = output_base
         self.resources = {}
         self.preprocessed_resources = {}
         self.external_resources = {}
 
-    def _add_resource(self, src, dst):
+    def add_resource(self, src, dst):
         self.resources[dst] = src
 
-    def add_resources(self, resources):
+    def add_resources(self, *resources):
         for dst in resources:
             # dst like 'res/layout/foo.xml', src like 'resources/layout/foo.xml'
-            src = dst.replace('res/', 'resources/')
+            src = dst.replace(self._output_base, self._input_base)
             self.resources[dst] = src
-
-    def _add_preprocessed_resource(self, src, dst):
-        self.preprocessed_resources[dst] = src
-
-    def add_preprocessed_resources(self, resources):
-        for dst in resources:
-            # dst like 'res/layout/foo.xml', src like 'resources/layout/foo.xml.in'
-            src = dst.replace('res/', 'resources/') + '.in'
-            self.preprocessed_resources[dst] = src
 
     def add_external_resource(self, src, dst):
         # dst like 'res/drawable-mdpi/logo.png', src like 'mobile/android/branding/unofficial/content/logo.png'
         self.external_resources[dst] = src
 
+    def _add_preprocessed_resource(self, src, dst):
+        self.preprocessed_resources[dst] = src
+
+    def add_preprocessed_resources(self, *resources):
+        for dst in resources:
+            # dst like 'res/layout/foo.xml', src like 'resources/layout/foo.xml.in'
+            src = dst.replace(self._output_base, self._input_base) + '.in'
+            self.preprocessed_resources[dst] = src
+
     def all_output_filenames(self):
         outset = set()
-        for r in [self.resources,
-                  self.preprocessed_resources,
-                  self.external_resources]:
-            outset.update(r.keys())
+        outset |= set(self.resources.keys())
+        outset |= set(self.external_resources.keys())
+        outset |= set(self.preprocessed_resources.keys())
         return outset
 
 class AndroidPackage(SandboxDerived):
