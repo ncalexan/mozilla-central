@@ -179,7 +179,7 @@ VARIABLES = {
         directories to search for included .idl files.
         """),
 
-    'ANDROID_PACKAGE': (AndroidPackageData, AndroidPackageData(),
+    'ANDROID_PACKAGE': (AndroidPackageData, AndroidPackageData(input_base='resources/'),
         """Android Package data.
 
         This dumb container type encapsulates data needed to build an
