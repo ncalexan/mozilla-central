@@ -65,10 +65,10 @@ class ProjectCreator(MozbuildObject):
         self._mozbuild_sandbox = None
         self._madedirs = []
 
-        self.defines = self._get_defines()
+        self._defines = self._get_defines()
         self._add_special_defines()
 
-        self._init_preprocessor(self.defines)
+        self._init_preprocessor(self._defines)
 
     @property
     def template_directory(self):
@@ -279,7 +279,7 @@ class ProjectCreator(MozbuildObject):
 
     def _android_compatibility_links(self):
         d = {}
-        src = self.defines['ANDROID_COMPAT_LIB']
+        src = self._defines['ANDROID_COMPAT_LIB']
         dst = os.path.join(self.project_directory, "jars", os.path.basename(src))
         d[src] = dst
 
@@ -296,7 +296,7 @@ class ProjectCreator(MozbuildObject):
         package = line.split("package ")[1].split(";")[0].strip()
 
         # Oh god.
-        package = package.replace('@ANDROID_PACKAGE_NAME@', self.defines['ANDROID_PACKAGE_NAME'])
+        package = package.replace('@ANDROID_PACKAGE_NAME@', self._defines['ANDROID_PACKAGE_NAME'])
 
         return package
 
@@ -353,7 +353,7 @@ class ProjectCreator(MozbuildObject):
             dst_dir = os.path.join(self.project_directory, "res", res_folder)
 
             mn = os.path.join(self.topsrcdir,
-                              self.defines['MOZ_BRANDING_DIRECTORY'],
+                              self._defines['MOZ_BRANDING_DIRECTORY'],
                               mn)
 
             d.update(self._files_from_manifest(mn, dst_dir))
@@ -364,7 +364,7 @@ class ProjectCreator(MozbuildObject):
     def _icon_files(self):
         d = {}
         p = os.path.join(self.topsrcdir,
-                         self.defines['MOZ_BRANDING_DIRECTORY'],
+                         self._defines['MOZ_BRANDING_DIRECTORY'],
                          "content")
 
         for (icon, res_folder) in [
@@ -413,27 +413,27 @@ class ProjectCreator(MozbuildObject):
     def _add_special_defines(self):
         '''Defines that make *me* feel /special/.
 
-        Updates `self.defines` in-place -- sorry.
+        Updates `self._defines` in-place -- sorry.
 
         We should transition these to config.status defines ASAP.
         '''
-        self.defines['_REPLACE_PACKAGE_DIR'] = self.defines['ANDROID_PACKAGE_NAME'].replace('.', '/')
-        self.defines['_REPLACE_APP_NAME'] = self.project_name
-        self.defines['_PACKAGE_NAME_'] = self.defines['ANDROID_PACKAGE_NAME']
-        self.defines['_REPLACE_OBJ_PROJECT_PATH'] = os.path.join(self.topobjdir, "mobile/android/base")
-        self.defines['_REPLACE_OBJ_PATH'] = self.topobjdir
-        self.defines['_REPLACE_PROJECT_NAME'] = self.project_name
-        self.defines['_REPLACE_MOZ_SRC_DIR'] = self.topsrcdir
-        self.defines['_REPLACE_PACKAGE_NAME'] = self.defines['ANDROID_PACKAGE_NAME']
+        self._defines['_REPLACE_PACKAGE_DIR'] = self._defines['ANDROID_PACKAGE_NAME'].replace('.', '/')
+        self._defines['_REPLACE_APP_NAME'] = self.project_name
+        self._defines['_PACKAGE_NAME_'] = self._defines['ANDROID_PACKAGE_NAME']
+        self._defines['_REPLACE_OBJ_PROJECT_PATH'] = os.path.join(self.topobjdir, "mobile/android/base")
+        self._defines['_REPLACE_OBJ_PATH'] = self.topobjdir
+        self._defines['_REPLACE_PROJECT_NAME'] = self.project_name
+        self._defines['_REPLACE_MOZ_SRC_DIR'] = self.topsrcdir
+        self._defines['_REPLACE_PACKAGE_NAME'] = self._defines['ANDROID_PACKAGE_NAME']
 
-        self.defines['MOZ_CHILD_PROCESS_NAME'] = 'lib/libplugin-container.so'
-        self.defines['MOZ_MIN_CPU_VERSION'] = '0'
-        self.defines['MOZ_BUILD_TIMESTAMP'] = '0'
-        self.defines['MOZ_APP_BUILDID'] = open(os.path.join(self.topobjdir, "config", "buildid"), 'rt').readline().strip()
-        self.defines['MOZ_ANDROID_SHARED_ACCOUNT_TYPE'] = self.defines['ANDROID_PACKAGE_NAME'] + "_sync"
-        self.defines['MOZ_APP_ABI'] = self.defines['TARGET_XPCOM_ABI']
-        self.defines['MANGLED_ANDROID_PACKAGE_NAME'] = self.defines['ANDROID_PACKAGE_NAME'].replace('fennec', 'f3nn3c')
-        self.defines['OBJDIR'] = os.path.join(self.topobjdir, "mobile", "android", "base")
+        self._defines['MOZ_CHILD_PROCESS_NAME'] = 'lib/libplugin-container.so'
+        self._defines['MOZ_MIN_CPU_VERSION'] = '0'
+        self._defines['MOZ_BUILD_TIMESTAMP'] = '0'
+        self._defines['MOZ_APP_BUILDID'] = open(os.path.join(self.topobjdir, "config", "buildid"), 'rt').readline().strip()
+        self._defines['MOZ_ANDROID_SHARED_ACCOUNT_TYPE'] = self._defines['ANDROID_PACKAGE_NAME'] + "_sync"
+        self._defines['MOZ_APP_ABI'] = self._defines['TARGET_XPCOM_ABI']
+        self._defines['MANGLED_ANDROID_PACKAGE_NAME'] = self._defines['ANDROID_PACKAGE_NAME'].replace('fennec', 'f3nn3c')
+        self._defines['OBJDIR'] = os.path.join(self.topobjdir, "mobile", "android", "base")
 
     def _java_in_preprocess_files(self):
         d = {}
