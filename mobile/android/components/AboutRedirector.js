@@ -71,7 +71,11 @@ let modules = {
   privatebrowsing: {
     uri: "chrome://browser/content/aboutPrivateBrowsing.xhtml",
     privileged: true
-  }
+  },
+  healthreport: {
+    uri: "chrome://browser/content/aboutHealthReport.xhtml",
+    privileged: true
+  },
 }
 
 function AboutRedirector() {}
