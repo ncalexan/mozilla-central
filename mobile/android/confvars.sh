@@ -58,3 +58,6 @@ MOZ_FOLD_LIBS=1
 
 # Enable navigator.mozPay
 MOZ_PAY=1
+
+# Enable about:healthreport.
+MOZ_SERVICES_HEALTHREPORT=1
