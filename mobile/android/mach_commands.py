@@ -63,7 +63,37 @@ class ProjectCreator(MozbuildObject):
         self._environment = None
         self._mozbuild_sandbox = None
         self._madedirs = []
-        self._init_preprocessor(self.defines)
+        self._init_preprocessor(self._with_special_defines())
+
+    def _with_special_defines(self):
+        '''Defines that make *me* feel /special/.
+
+        We should transition these to config.status defines ASAP.
+        '''
+        defines = {}
+        for k, v in self.substs.items():
+            defines[k] = v
+        for k, v in self.defines.items():
+            defines[k] = v
+        defines['_REPLACE_APP_NAME'] = self.project_name
+        defines['_REPLACE_PACKAGE_DIR'] = defines['ANDROID_PACKAGE_NAME'].replace('.', '/')
+        defines['_PACKAGE_NAME_'] = defines['ANDROID_PACKAGE_NAME']
+        defines['_REPLACE_OBJ_PROJECT_PATH'] = os.path.join(self.topobjdir, "mobile/android/base")
+        defines['_REPLACE_OBJ_PATH'] = self.topobjdir
+        defines['_REPLACE_PROJECT_NAME'] = self.project_name
+        defines['_REPLACE_MOZ_SRC_DIR'] = self.topsrcdir
+        defines['_REPLACE_PACKAGE_NAME'] = defines['ANDROID_PACKAGE_NAME']
+
+        defines['MOZ_CHILD_PROCESS_NAME'] = 'lib/libplugin-container.so'
+        defines['MOZ_MIN_CPU_VERSION'] = '0'
+        defines['MOZ_BUILD_TIMESTAMP'] = '0'
+        defines['MOZ_APP_BUILDID'] = open(os.path.join(self.topobjdir, "config", "buildid"), 'rt').readline().strip()
+        defines['MOZ_ANDROID_SHARED_ACCOUNT_TYPE'] = defines['ANDROID_PACKAGE_NAME'] + "_sync"
+        defines['MOZ_ANDROID_SHARED_FXACCOUNT_TYPE'] = defines['ANDROID_PACKAGE_NAME'] + "_account"
+        defines['MOZ_APP_ABI'] = defines['TARGET_XPCOM_ABI']
+        defines['MANGLED_ANDROID_PACKAGE_NAME'] = defines['ANDROID_PACKAGE_NAME'].replace('fennec', 'f3nn3c')
+        defines['OBJDIR'] = os.path.join(self.topobjdir, "mobile", "android", "base")
+        return defines
 
     @property
     def template_directory(self):
@@ -76,17 +106,10 @@ class ProjectCreator(MozbuildObject):
         return os.path.join(self.workspace_directory, self.project_name)
 
     @property
-    def environment(self):
-        if self._environment is None:
-            config_status = os.path.join(self.topobjdir, 'config.status')
-            self._environment = ConfigEnvironment.from_config_status(config_status)
-        return self._environment
-
-    @property
     def mozbuild_sandbox(self):
         if self._mozbuild_sandbox is None:
             path = os.path.join(self.topsrcdir, 'mobile/android/base/moz.build')
-            self._mozbuild_sandbox = MozbuildSandbox(self.environment, path)
+            self._mozbuild_sandbox = MozbuildSandbox(self.config_environment, path)
             self._mozbuild_sandbox.exec_file(path, True)
         return self._mozbuild_sandbox
 
@@ -239,6 +262,12 @@ class ProjectCreator(MozbuildObject):
         total = len(ordered)
         count = 0
         for (src, dst) in ordered:
+            # message = 'From {dst} to {src}'
+            # shortsrc = self._shorten(src)
+            # shortdst = self._shorten(dst)
+            # self.log(logging.WARN, LOG_TAG,
+            #          {'src': shortsrc, 'dst': shortdst},
+            #          message)
             self._ensureParentDir(dst)
 
             self._update_or_create_symlink(src, dst)
@@ -274,7 +303,7 @@ class ProjectCreator(MozbuildObject):
 
     def _android_compatibility_links(self):
         d = {}
-        src = self.defines['ANDROID_COMPAT_LIB']
+        src = self.substs['ANDROID_COMPAT_LIB']
         dst = os.path.join(self.project_directory, "jars", os.path.basename(src))
         d[src] = dst
 
@@ -291,7 +320,7 @@ class ProjectCreator(MozbuildObject):
         package = line.split("package ")[1].split(";")[0].strip()
 
         # Oh god.
-        package = package.replace('@ANDROID_PACKAGE_NAME@', self.defines['ANDROID_PACKAGE_NAME'])
+        package = package.replace('@ANDROID_PACKAGE_NAME@', self.substs['ANDROID_PACKAGE_NAME'])
 
         return package
 
@@ -348,7 +377,7 @@ class ProjectCreator(MozbuildObject):
             dst_dir = os.path.join(self.project_directory, "res", res_folder)
 
             mn = os.path.join(self.topsrcdir,
-                              self.defines['MOZ_BRANDING_DIRECTORY'],
+                              self.substs['MOZ_BRANDING_DIRECTORY'],
                               mn)
 
             d.update(self._files_from_manifest(mn, dst_dir))
@@ -359,7 +388,7 @@ class ProjectCreator(MozbuildObject):
     def _icon_files(self):
         d = {}
         p = os.path.join(self.topsrcdir,
-                         self.defines['MOZ_BRANDING_DIRECTORY'],
+                         self.substs['MOZ_BRANDING_DIRECTORY'],
                          "content")
 
         for (icon, res_folder) in [
@@ -400,7 +429,7 @@ class ProjectCreator(MozbuildObject):
         d = {}
         for fn in self._find(True, "mobile/android/base", "*.java.in"):
             bn = os.path.basename(fn)
-            if bn in ['CrashReporter.java.in']:
+            if bn in ['CrashReporter.java'] and not self.defines('MOZ_CRASHREPORTER').strip():
                 continue
 
             src = os.path.join(self.topsrcdir, fn)
@@ -475,7 +504,7 @@ class ProjectCreator(MozbuildObject):
         symlinks.append((src, dst))
 
         # There should only be one 'fennec*apk' in our dist/ dir.
-        (src, ) = self._find(False, self.distdir, "%s*.apk" % self.defines['MOZ_APP_NAME'])
+        src = self.get_binary_path(validate_exists=False)
         dst = os.path.join(self.project_directory, "bin", "App.apk")
         symlinks.append((src, dst))
 
@@ -564,19 +593,14 @@ class MachCommands(MachCommandBase):
 
 # topsrcdir = '/Users/ncalexan/Mozilla/mozilla-inbound'
 # topobjdir = '/Users/ncalexan/Mozilla/mozilla-inbound/objdir-droid'
-
 # pc = ProjectCreator(topsrcdir, None, None, topobjdir=topobjdir,
 #                     workspace_directory='~/Documents/workspace',
-#                     project_name='FennecTest6',
+#                     project_name='FennecTest',
 #                     template_directory='~/Mozilla/mozilla-inbound/mobile/android/eclipse')
-
 # from mozbuild.backend.configenvironment import ConfigEnvironment
-
 # env = ConfigEnvironment(topsrcdir, topobjdir, defines=[],
 #                         non_global_defines=[], substs=[])
-
 # from mozbuild.frontend.reader import MozbuildSandbox
-
 # path = os.path.join(topsrcdir, 'mobile/android/base/moz.build')
 # sb = MozbuildSandbox(env, path)
 # sb.exec_file(path, True)

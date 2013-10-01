@@ -5,7 +5,7 @@
 	<classpathentry excluding="org/mozilla/gecko/sync/" including="org/mozilla/gecko/|@_REPLACE_PACKAGE_DIR@/" kind="src" path="src"/>
 	<classpathentry kind="lib" path="jars/android-support-v4.jar"/>
 	<classpathentry kind="lib" path="jars/gecko-browser.jar"/>
-	<classpathentry kind="lib" path="jars/robotium-solo-3.6.jar"/>
+	<classpathentry kind="lib" path="jars/robotium-solo-4.2.jar"/>
 	<classpathentry kind="lib" path="jars/sync-thirdparty.jar"/>
 	<classpathentry kind="lib" path="classes/robocop"/>
 	<classpathentry kind="output" path="bin/classes"/>
