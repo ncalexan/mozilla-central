@@ -41,9 +41,8 @@ from mozbuild.util import (
     FileAvoidWrite,
 )
 
-LOG_TAG = 'create_eclipse_projects'
 
-class ProjectCreator(MozbuildObject):
+class EclipseProjectCreator(MozbuildObject):
     '''Create Eclipse projects for Firefox for Android.'''
 
     def __init__(self, topsrcdir, settings, log_manager, topobjdir=None,
@@ -53,9 +52,9 @@ class ProjectCreator(MozbuildObject):
         MozbuildObject.__init__(self, topsrcdir, settings, log_manager,
                                 topobjdir=topobjdir)
 
-        self.log(logging.WARN, LOG_TAG, {'topsrcdir': self.topsrcdir,
-                                         'topobjdir': self.topobjdir, },
-                 'Using {topsrcdir} for source and {topobjdir} for objects.')
+        self.warn({ 'topsrcdir': self.topsrcdir,
+                    'topobjdir': self.topobjdir, },
+                  'Using {topsrcdir} for source and {topobjdir} for objects.')
 
         self.workspace_directory = os.path.abspath(os.path.expanduser(workspace_directory))
         self.project_name = project_name
@@ -64,6 +63,10 @@ class ProjectCreator(MozbuildObject):
         self._mozbuild_sandbox = None
         self._madedirs = []
         self._init_preprocessor(self._with_special_defines())
+
+    def warn(self, *args, **kwargs):
+        LOG_TAG = 'create_eclipse_projects'
+        self.log(logging.WARN, LOG_TAG, *args, **kwargs)
 
     def _with_special_defines(self):
         '''Defines that make *me* feel /special/.
@@ -241,9 +244,8 @@ class ProjectCreator(MozbuildObject):
         shortsrc = self._shorten(src)
         shortdst = self._shorten(dst)
 
-        self.log(logging.WARN, LOG_TAG,
-                 {'src': shortsrc, 'dst': shortdst},
-                 message)
+        self.warn({'src': shortsrc, 'dst': shortdst},
+                  message)
 
 
     def _create_symlinks(self, assocs):
@@ -258,24 +260,15 @@ class ProjectCreator(MozbuildObject):
         Logs process.
         '''
         ordered = self._order_symlinks(assocs)
-
         total = len(ordered)
         count = 0
         for (src, dst) in ordered:
-            # message = 'From {dst} to {src}'
-            # shortsrc = self._shorten(src)
-            # shortdst = self._shorten(dst)
-            # self.log(logging.WARN, LOG_TAG,
-            #          {'src': shortsrc, 'dst': shortdst},
-            #          message)
             self._ensureParentDir(dst)
-
             self._update_or_create_symlink(src, dst)
-
             count += 1
             if (count % 100 == 0):
-                self.log(logging.WARN, LOG_TAG, {'count': count, 'total': total},
-                         'Created {count} of {total} symlinks.')
+                self.warn({'count': count, 'total': total},
+                          'Created {count} of {total} symlinks.')
 
     def _jar_links(self):
         d = {}
@@ -462,13 +455,13 @@ class ProjectCreator(MozbuildObject):
         self._preprocess_files(javains)
 
         symlinks = self._links()
-        self.log(logging.WARN, LOG_TAG, {'symlinks': len(symlinks)},
-                 'Creating {symlinks} symlinks.')
+        self.warn({'symlinks': len(symlinks)},
+                  'Creating {symlinks} symlinks.')
         self._create_symlinks(symlinks)
 
     def _preprocess_files(self, assocs):
-        self.log(logging.WARN, LOG_TAG, {'count': len(assocs)},
-                 'Preprocessing {count} files.')
+        self.warn({'count': len(assocs)},
+                  'Preprocessing {count} files.')
         for src in assocs:
             dst = assocs[src]
             self._preprocess(src, dst)
@@ -512,8 +505,8 @@ class ProjectCreator(MozbuildObject):
 
     def _create_project_links(self):
         symlinks = self._project_links()
-        self.log(logging.WARN, LOG_TAG, {'symlinks': len(symlinks)},
-                 'Creating {symlinks} project symlinks.')
+        self.warn({'symlinks': len(symlinks)},
+                  'Creating {symlinks} project symlinks.')
         self._create_symlinks(symlinks)
 
     def _create_project_files(self):
@@ -561,8 +554,432 @@ class ProjectCreator(MozbuildObject):
         if create_project_files:
             self._create_project_files()
 
+
+class IntelliJProjectCreator(MozbuildObject):
+    '''Create IntelliJ projects for Firefox for Android.'''
+
+    def __init__(self, topsrcdir, settings, log_manager, topobjdir=None,
+                 workspace_directory=None,
+                 project_name=None,
+                 template_directory=None):
+        MozbuildObject.__init__(self, topsrcdir, settings, log_manager,
+                                topobjdir=topobjdir)
+
+        self.warn({'topsrcdir': self.topsrcdir,
+                   'topobjdir': self.topobjdir, },
+                  'Using {topsrcdir} for source and {topobjdir} for objects.')
+
+        self.workspace_directory = os.path.abspath(os.path.expanduser(workspace_directory))
+        self.project_name = project_name
+        self._template_directory = template_directory
+        self._environment = None
+        self._mozbuild_sandbox = None
+        self._madedirs = []
+        self._init_preprocessor(self._with_special_defines())
+
+    def warn(self, *args, **kwargs):
+        LOG_TAG = 'create_intellij_projects'
+        self.log(logging.WARN, LOG_TAG, *args, **kwargs)
+
+    def _with_special_defines(self):
+        '''Defines that make *me* feel /special/.
+
+        We should transition these to config.status defines ASAP.
+        '''
+        defines = {}
+        for k, v in self.substs.items():
+            defines[k] = v
+        for k, v in self.defines.items():
+            defines[k] = v
+        defines['_REPLACE_APP_NAME'] = self.project_name
+        defines['_REPLACE_PACKAGE_DIR'] = defines['ANDROID_PACKAGE_NAME'].replace('.', '/')
+        defines['_PACKAGE_NAME_'] = defines['ANDROID_PACKAGE_NAME']
+        defines['_REPLACE_OBJ_PROJECT_PATH'] = os.path.join(self.topobjdir, "mobile/android/base")
+        defines['_REPLACE_OBJ_PATH'] = self.topobjdir
+        defines['_REPLACE_PROJECT_NAME'] = self.project_name
+        defines['_REPLACE_MOZ_SRC_DIR'] = self.topsrcdir
+        defines['_REPLACE_PACKAGE_NAME'] = defines['ANDROID_PACKAGE_NAME']
+
+        defines['MOZ_CHILD_PROCESS_NAME'] = 'lib/libplugin-container.so'
+        defines['MOZ_MIN_CPU_VERSION'] = '0'
+        defines['MOZ_BUILD_TIMESTAMP'] = '0'
+        defines['MOZ_APP_BUILDID'] = open(os.path.join(self.topobjdir, "config", "buildid"), 'rt').readline().strip()
+        defines['MOZ_ANDROID_SHARED_ACCOUNT_TYPE'] = defines['ANDROID_PACKAGE_NAME'] + "_sync"
+        defines['MOZ_ANDROID_SHARED_FXACCOUNT_TYPE'] = defines['ANDROID_PACKAGE_NAME'] + "_account"
+        defines['MOZ_APP_ABI'] = defines['TARGET_XPCOM_ABI']
+        defines['MANGLED_ANDROID_PACKAGE_NAME'] = defines['ANDROID_PACKAGE_NAME'].replace('fennec', 'f3nn3c')
+        defines['OBJDIR'] = os.path.join(self.topobjdir, "mobile", "android", "base")
+        defines['ROBOTIUM_SOLO_LIB'] = os.path.join(self.topsrcdir, "build", "mobile", "robocop", "robotium-solo-4.2.jar")
+        return defines
+
+    @property
+    def template_directory(self):
+        if self._template_directory is None:
+            self._template_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "intellij")
+        return self._template_directory
+
+    @property
+    def project_directory(self):
+        return os.path.join(self.workspace_directory, self.project_name)
+
+    @property
+    def mozbuild_sandbox(self):
+        if self._mozbuild_sandbox is None:
+            path = os.path.join(self.topsrcdir, 'mobile/android/base/moz.build')
+            self._mozbuild_sandbox = MozbuildSandbox(self.config_environment, path)
+            self._mozbuild_sandbox.exec_file(path, True)
+        return self._mozbuild_sandbox
+
+    def _init_preprocessor(self, defines):
+        self.pp = Preprocessor()
+        self.pp.setLineEndings("lf")
+        self.pp.setMarker("#")
+        self.pp.do_filter("substitution")
+        self.pp.context.update(defines)
+
+    def _ensureParentDir(self, filename):
+        dirname = os.path.dirname(filename)
+        if dirname and not dirname in self._madedirs and not os.path.exists(dirname):
+            os.makedirs(dirname)
+            self._madedirs.append(dirname)
+
+    def _preprocess(self, input_filename, output_filename, makedirs=True):
+        '''
+        Preprocess `input_filename` into `output_filename`, substituting
+        definitions from `defines`.
+
+        Directories needed to write output file will be created if
+        `makedirs` is truthy.
+        '''
+        # make sure we can actually write to output directory
+        if makedirs:
+            self._ensureParentDir(output_filename)
+
+        # Avoid writing unchanged files.  This trades memory (since
+        # output is buffered) to save disk access (refreshes and
+        # recompiles in IntelliJ).
+        with FileAvoidWrite(output_filename) as fo:
+            self.pp.out = fo
+            with open(input_filename, "rt") as fi:
+                self.pp.do_include(fi)
+
+    def _find(self, src, base, *names):
+        lines = []
+        def _lh(line):
+            lines.append(line)
+
+        args = ["find", base]
+
+        names = list(names)
+        while names:
+            args.extend(["-name", names.pop()])
+            if names:
+                args.append("-o")
+
+        if src:
+            self._run_command_in_srcdir(args=args, line_handler=_lh)
+        else:
+            self._run_command_in_objdir(args=args, line_handler=_lh)
+
+        return lines
+
+    def _order_symlinks(self, d):
+        r'''
+
+        Take a list of (src, dst) associations and order it so that
+        the destination links are close together on the file system.
+        '''
+        def _key(assoc):
+            src, dst = assoc
+            return dst
+
+        ordered = []
+        for (src, dst) in d:
+            src = os.path.abspath(src)
+            dst = os.path.abspath(dst)
+
+            ordered.append((src, dst))
+        ordered.sort(key=_key)
+
+        return ordered
+
+    def _shorten(self, link):
+        r'''
+
+        If link starts with `topobjdir`, `topsrcdir`, or
+        `project_directory`, return a shorter textual representation.
+
+        '''
+        if link.startswith(self.topobjdir):
+            _, end = link.split(self.topobjdir)
+            if end.startswith('/'):
+                end = end[1:]
+            return os.path.join("OBJDIR", end)
+        if link.startswith(self.topsrcdir):
+            _, end = link.split(self.topsrcdir)
+            if end.startswith('/'):
+                end = end[1:]
+            return os.path.join("SRCDIR", end)
+        if link.startswith(self.project_directory):
+            _, end = link.split(self.project_directory)
+            if end.startswith('/'):
+                end = end[1:]
+            return os.path.join(self.project_name, end)
+        return link
+
+    def _update_or_create_symlink(self, src, dst):
+        r'''
+
+        Make `dst` point to `src` but don't always re-create links,
+        since that is slow.
+
+        '''
+        try:
+            existing = os.readlink(dst)
+            if os.path.abspath(existing) != src:
+                # dst exists, is a link, and is wrong
+                os.remove(dst)
+                os.symlink(src, dst)
+                message = 'Replaced link from {dst} to {src}.'
+            else:
+                message = 'Keeping existing link from {dst} to {src}.'
+        except OSError as e:
+            if e.errno == errno.EINVAL:
+                # dst exists but is not a link
+                raise Exception("Not replacing non-link '%s'" % dst)
+            elif e.errno == errno.ENOENT:
+                # dst does not exist
+                os.symlink(src, dst)
+                message = 'Creating link from {dst} to {src}.'
+            else:
+                raise e
+
+        # for logging only.
+        shortsrc = self._shorten(src)
+        shortdst = self._shorten(dst)
+
+        self.warn({'src': shortsrc, 'dst': shortdst},
+                  message)
+
+
+    def _create_symlinks(self, assocs):
+        r'''
+
+        Take a list of (src, dst) associations and create symlinks
+        from dst -> src.
+
+        Removes any existing files and ensures that directory trees
+        are in place to allow destination links to be created.
+
+        Logs process.
+        '''
+        ordered = self._order_symlinks(assocs)
+        total = len(ordered)
+        count = 0
+        for (src, dst) in ordered:
+            self._ensureParentDir(dst)
+            self._update_or_create_symlink(src, dst)
+            count += 1
+            if (count % 100 == 0):
+                self.warn({'count': count, 'total': total},
+                          'Created {count} of {total} symlinks.')
+
+    def _get_package(self, fileobj):
+        for line in fileobj.readlines():
+            line = line.strip()
+            if line.startswith('package'):
+                break
+        else:
+            raise Exception("Could not find package declaration in " + fileobj.name)
+
+        package = line.split("package ")[1].split(";")[0].strip()
+
+        # Oh god.
+        package = package.replace('@ANDROID_PACKAGE_NAME@', self.substs['ANDROID_PACKAGE_NAME'])
+
+        return package
+
+    def _source_files(self):
+        d = {}
+        p = os.path.join(self.project_directory, "generated")
+        for fn in self._find(False, "mobile/android/base", "*.java"):
+            bn = os.path.basename(fn)
+            if bn in ['BuildConfig.java']:
+                continue
+            elif bn in ['WebAppsFragments.java']:
+                continue
+            elif bn in ['R.java']:
+                continue
+
+            src = os.path.join(self.topobjdir, fn)
+            dst = os.path.join(p, bn)
+            d[src] = dst
+
+        return d
+
+    def _files_from_manifest(self, mn, dst_dir):
+        d = {}
+        if not os.path.exists(mn):
+            return d
+
+        for fn in open(mn, 'rt').readlines():
+            fn = fn.strip()
+            src = os.path.join(self.topsrcdir, fn)
+            dst = os.path.join(dst_dir, os.path.basename(fn))
+            d[src] = dst
+
+        return d
+
+    def _preprocessed_xml_files(self):
+        d = {}
+        # for fn in self.mozbuild_sandbox['ANDROID_PREPROCESSED_RESOURCE_XML_FILES']:
+        #     src = os.path.join(self.topobjdir, "mobile/android/base", fn)
+        #     dst = os.path.join(self.project_directory, fn)
+        #     d[src] = dst
+        return d
+
+    def _java_in_preprocess_files(self):
+        d = {}
+        for fn in self._find(True, "mobile/android/base", "*.java.in"):
+            bn = os.path.basename(fn)
+            if bn in ['CrashReporter.java'] and not self.defines('MOZ_CRASHREPORTER').strip():
+                continue
+
+            src = os.path.join(self.topsrcdir, fn)
+            package_dir = self._get_package(open(src)).replace('.', '/')
+
+            dst = os.path.join(self.project_directory, "generated", package_dir, bn)
+            dst, _ = dst.split(".in")
+
+            d[fn] = dst
+        return d
+
+    def _links(self):
+        symlinks = {
+            os.path.join(self.topobjdir, "mobile", "android", "base", "R.java") :
+            os.path.join(self.project_directory, "generated", "R.java"),
+
+            os.path.join(self.topobjdir, "mobile", "android", "base", "AndroidManifest.xml") :
+            os.path.join(self.project_directory, "AndroidManifest.xml"),
+
+            os.path.join(self.topobjdir, "mobile", "android", "base", "res") :
+            os.path.join(self.project_directory, "res"),
+
+            os.path.join(self.topobjdir, "mobile", "android", "base") :
+            os.path.join(self.project_directory, "src"),
+
+            os.path.join(self.topobjdir, "dist", "fennec", "assets") :
+            os.path.join(self.project_directory, "assets"),
+
+            os.path.join(self.topobjdir, "dist", "fennec", "lib") :
+            os.path.join(self.project_directory, "libs")
+            }
+
+        for f in [
+            self._source_files,
+            self._preprocessed_xml_files,
+            ]:
+            symlinks.update(f())
+
+        return symlinks.items()
+
+    def _create_links(self):
+        javains = self._java_in_preprocess_files()
+        self._preprocess_files(javains)
+
+        symlinks = self._links()
+        self.warn({'symlinks': len(symlinks)},
+                  'Creating {symlinks} symlinks.')
+        self._create_symlinks(symlinks)
+
+    def _preprocess_files(self, assocs):
+        self.warn({'count': len(assocs)},
+                  'Preprocessing {count} files.')
+        for src in assocs:
+            dst = assocs[src]
+            self._preprocess(src, dst)
+
+    def _project_links(self):
+        symlinks = []
+
+        # BRN: comment here
+        #src = os.path.join(self.topobjdir, "mobile", "android", "base", "R.java")
+        #dst = os.path.join(self.project_directory, "generated", "R.java")
+        #symlinks.append((src, dst))
+
+        ## BRN: comment here
+        #src = os.path.join(self.topobjdir, "mobile", "android", "base", "AndroidManifest.xml")
+        #dst = os.path.join(self.project_directory, "manifest", "AndroidManifest.xml")
+        #symlinks.append((src, dst))
+
+        return symlinks
+
+    def _create_project_links(self):
+        symlinks = self._project_links()
+        self.warn({'symlinks': len(symlinks)},
+                  'Creating {symlinks} project symlinks.')
+        self._create_symlinks(symlinks)
+
+    def _create_project_files(self):
+        self._create_project_links()
+
+        # intellij/KEY -> workspace/VALUE
+        fns = {
+            "dotname": ".name",
+            "Fennec.iml": "Fennec.iml",
+            "modules.xml": "modules.xml",
+            "vcs.xml": "vcs.xml",
+            "workspace.xml": "workspace.xml",
+            }
+
+        for fn in fns:
+            self._preprocess(os.path.join(self.template_directory, fn),
+                             os.path.join(self.project_directory, fns[fn]))
+
+    '''Create IntelliJ projects for Firefox for Android.'''
+    def create_projects(self,
+                        create_links=True,
+                        create_project_files=True,
+                        **kwargs):
+        self._ensureParentDir(self.project_directory)
+
+        if create_links:
+            self._create_links()
+
+        if create_project_files:
+            self._create_project_files()
+
 @CommandProvider
 class MachCommands(MachCommandBase):
+    @Command('intellify', description='Create IntelliJ projects for Fennec.', category='devenv')
+    @CommandArgument('--workspace', '-w',
+                     help='IntelliJ project directory.')
+    @CommandArgument('--project', '-p', default='Fennec',
+                     help='IntelliJ project name.')
+    @CommandArgument('--no-links', '-L', default=False,
+                     action='store_true',
+                     help='do not refresh symlinks.')
+    @CommandArgument('--no-project-files', '-P', default=False,
+                     action='store_true',
+                     help='do not create project files.')
+    def intellify(self, **params):
+        workspace = params.pop('workspace', None)
+        if not workspace:
+            raise Exception('IntelliJ workspace directory must be provided.')
+        project = params.pop('project')
+        create_links = not params.pop('no_links')
+        create_project_files = not params.pop('no_project_files')
+
+        helper = IntelliJProjectCreator(
+            self.topsrcdir, self.settings, self.log_manager,
+            topobjdir=os.path.abspath(self.topobjdir),
+            workspace_directory=workspace,
+            project_name=project)
+
+        helper.create_projects(create_links=create_links,
+                               create_project_files=create_project_files,
+                               **params)
+
     @Command('eclipsify', description='Create Eclipse projects for Fennec.', category='devenv')
     @CommandArgument('--workspace', '-w',
                      help='Eclipse workspace directory.')
@@ -581,27 +998,12 @@ class MachCommands(MachCommandBase):
         project = params.pop('project')
         create_links = not params.pop('no_links')
         create_project_files = not params.pop('no_project_files')
-
-        helper = ProjectCreator(self.topsrcdir, self.settings, self.log_manager,
-                                topobjdir=os.path.abspath(self.topobjdir),
-                                workspace_directory=workspace,
-                                project_name=project)
-
+        helper = EclipseProjectCreator(
+            self.topsrcdir, self.settings, self.log_manager,
+            topobjdir=os.path.abspath(self.topobjdir),
+            workspace_directory=workspace,
+            project_name=project)
         helper.create_projects(create_links=create_links,
                                create_project_files=create_project_files,
                                **params)
-
-# topsrcdir = '/Users/ncalexan/Mozilla/mozilla-inbound'
-# topobjdir = '/Users/ncalexan/Mozilla/mozilla-inbound/objdir-droid'
-# pc = ProjectCreator(topsrcdir, None, None, topobjdir=topobjdir,
-#                     workspace_directory='~/Documents/workspace',
-#                     project_name='FennecTest',
-#                     template_directory='~/Mozilla/mozilla-inbound/mobile/android/eclipse')
-# from mozbuild.backend.configenvironment import ConfigEnvironment
-# env = ConfigEnvironment(topsrcdir, topobjdir, defines=[],
-#                         non_global_defines=[], substs=[])
-# from mozbuild.frontend.reader import MozbuildSandbox
-# path = os.path.join(topsrcdir, 'mobile/android/base/moz.build')
-# sb = MozbuildSandbox(env, path)
-# sb.exec_file(path, True)
 
