@@ -14,7 +14,9 @@ ANDROID_EXTRA_JARS += \
 
 ANDROID_ASSETS_DIR := $(TESTPATH)/assets
 
-_JAVA_HARNESS := \
+JAVA_JAR_TARGETS += robocop-harness
+robocop-harness_DEST := robocop-harness.jar
+robocop-harness_JAVAFILES := \
   Actions.java \
   Assert.java \
   Driver.java \
@@ -29,12 +31,15 @@ _JAVA_HARNESS := \
   RobocopUtils.java \
   PaintedSurface.java \
   $(NULL)
+robocop-harness_JAVAC_FLAGS := -Xlint:all,-cast,-rawtypes,-serial,-unchecked
 
-# pre-process harness sources
-PP_TARGETS        += java-harness
-java-harness      := $(addprefix $(srcdir)/,$(addsuffix .in,$(_JAVA_HARNESS)))
-java-harness-dep  := $(addprefix $(CURDIR)/,$(_JAVA_HARNESS))
-java-harness_PATH := $(CURDIR)
+libs:: robocop-harness.jar
+
+# # pre-process harness sources
+# PP_TARGETS        += java-harness
+# java-harness      := $(addprefix $(srcdir)/,$(addsuffix .in,$(_JAVA_HARNESS)))
+# java-harness-dep  := $(addprefix $(CURDIR)/,$(_JAVA_HARNESS))
+# java-harness_PATH := $(CURDIR)
 
 # pre-process test sources
 PP_TARGETS      += java-tests
@@ -70,13 +75,13 @@ MOCHITEST_ROBOCOP_FILES := \
 GARBAGE += \
   AndroidManifest.xml \
   $(java-tests-dep) \
-  $(java-harness-dep) \
+  # $(java-harness-dep) \
   $(robocop-deps) \
   $(NULL)
 
 JAVAFILES += \
   $(robocop-deps) \
-  $(java-harness-dep) \
+  # $(java-harness-dep) \
   $(java-tests-dep) \
   $(NULL)
 
