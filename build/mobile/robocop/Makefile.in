@@ -43,12 +43,6 @@ robocop-harness_JAVAC_FLAGS := -Xlint:all,-cast,-rawtypes,-serial,-unchecked
 
 libs:: robocop-harness.jar
 
-# # pre-process harness sources
-# PP_TARGETS        += java-harness
-# java-harness      := $(addprefix $(srcdir)/,$(addsuffix .in,$(_JAVA_HARNESS)))
-# java-harness-dep  := $(addprefix $(CURDIR)/,$(_JAVA_HARNESS))
-# java-harness_PATH := $(CURDIR)
-
 # pre-process test sources
 PP_TARGETS      += java-tests
 java-tests-src  := $(wildcard $(TESTPATH)/*.java.in)
@@ -83,13 +77,11 @@ MOCHITEST_ROBOCOP_FILES := \
 GARBAGE += \
   AndroidManifest.xml \
   $(java-tests-dep) \
-  # $(java-harness-dep) \
   $(robocop-deps) \
   $(NULL)
 
 JAVAFILES += \
   $(robocop-deps) \
-  # $(java-harness-dep) \
   $(java-tests-dep) \
   $(NULL)
 
