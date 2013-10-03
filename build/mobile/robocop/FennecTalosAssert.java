@@ -7,7 +7,7 @@ package @ANDROID_PACKAGE_NAME@;
 
 
 public class FennecTalosAssert implements Assert {
-    
+
     public FennecTalosAssert() { }
 
     /**
@@ -43,7 +43,7 @@ public class FennecTalosAssert implements Assert {
         boolean pass = (a == null ? b == null : a.equals(b));
         ok(pass, name, "got " + a + ", expected " + b);
     }
-    
+
     public void isnot(Object a, Object b, String name) {
         boolean fail = (a == null ? b == null : a.equals(b));
         ok(!fail, name, "got " + a + ", expected not " + b);
@@ -64,7 +64,7 @@ public class FennecTalosAssert implements Assert {
     public void todo_is(Object a, Object b, String name) {
         throw new UnsupportedOperationException();
     }
-    
+
     public void todo_isnot(Object a, Object b, String name) {
         throw new UnsupportedOperationException();
     }

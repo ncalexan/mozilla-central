@@ -11,7 +11,7 @@ import android.app.Activity;
 public interface Driver {
     /**
      * Find the first Element using the given method.
-     * 
+     *
      * @param activity The activity the element belongs to
      * @param name The name of the element
      * @return The first matching element on the current context, or null if not found.

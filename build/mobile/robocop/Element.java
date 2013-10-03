@@ -5,8 +5,8 @@
 
 package @ANDROID_PACKAGE_NAME@;
 
-/** 
- *  Element provides access to a specific UI view (android.view.View). 
+/**
+ *  Element provides access to a specific UI view (android.view.View).
  *  See also Driver.findElement().
  */
 public interface Element {
@@ -17,7 +17,7 @@ public interface Element {
     /** Returns true if the element is currently displayed */
     boolean isDisplayed();
 
-    /** 
+    /**
      * Returns the text currently displayed on the element, or null
      * if the text cannot be retrieved.
      */

@@ -16,7 +16,7 @@ public class FennecMochitestAssert implements Assert {
     private int mPassed = 0;
     private int mFailed = 0;
     private int mTodo = 0;
-    
+
     // Used to write the first line of the test file
     private boolean mLogStarted = false;
 
@@ -145,7 +145,7 @@ public class FennecMochitestAssert implements Assert {
         boolean pass = checkObjectsEqual(a,b);
         ok(pass, name, getEqualString(a,b, pass));
     }
-    
+
     public void isnot(Object a, Object b, String name) {
         boolean pass = checkObjectsNotEqual(a,b);
         ok(pass, name, getNotEqualString(a,b,pass));

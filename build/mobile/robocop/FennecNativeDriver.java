@@ -157,7 +157,7 @@ public class FennecNativeDriver implements Driver {
         return mGeckoWidth;
     }
 
-    /** Find the named element in the list of known Fennec views. 
+    /** Find the named element in the list of known Fennec views.
      *  @return An Element representing the view, or null if the view is not found.
      */
     public Element findElement(Activity activity, String name) {
@@ -319,7 +319,7 @@ public class FennecNativeDriver implements Driver {
         public scrollHandler(){};
         public Object invoke(Object proxy, Method method, Object[] args) {
             try {
-                // Disect the JSON object into the appropriate variables 
+                // Disect the JSON object into the appropriate variables
                 JSONObject jo = ((JSONObject)args[1]);
                 mScrollHeight = jo.getInt("y");
                 mHeight = jo.getInt("cheight");
@@ -329,7 +329,7 @@ public class FennecNativeDriver implements Driver {
                 }
 
             } catch( Throwable e) {
-                FennecNativeDriver.log(FennecNativeDriver.LogLevel.WARN, 
+                FennecNativeDriver.log(FennecNativeDriver.LogLevel.WARN,
                     "WARNING: ScrollReceived, but read wrong!");
             }
             return null;
@@ -347,7 +347,7 @@ public class FennecNativeDriver implements Driver {
     }
 
     public void setupScrollHandling() {
-        //Setup scrollHandler to catch "robocop:scroll" events. 
+        //Setup scrollHandler to catch "robocop:scroll" events.
         try {
             Class [] interfaces = new Class[1];
             interfaces[0] = mEventListenerClass;
@@ -387,7 +387,7 @@ public class FennecNativeDriver implements Driver {
             } catch (IOException e) {
             }
         }
-        return text.toString();    
+        return text.toString();
     }
 
     /**
@@ -419,7 +419,7 @@ public class FennecNativeDriver implements Driver {
         log(level, sb.toString());
     }
 
-    /** 
+    /**
      *  Set the filename used for logging. If the file already exists, delete it
      *  as a safe-guard against accidentally appending to an old log file.
      */

@@ -105,7 +105,7 @@ public class FennecNativeActions implements Actions {
             if(methodName.equals("hashCode")) {
                 return 314;
             }
-            FennecNativeDriver.log(FennecNativeDriver.LogLevel.DEBUG, 
+            FennecNativeDriver.log(FennecNativeDriver.LogLevel.DEBUG,
                 "Waking up on "+methodName);
             mEventExpecter.notifyOfEvent(args);
             return null;
@@ -296,7 +296,7 @@ public class FennecNativeActions implements Actions {
             FennecNativeDriver.log(LogLevel.ERROR, e);
         } catch (InvocationTargetException e) {
             FennecNativeDriver.log(LogLevel.ERROR, e);
-        } 
+        }
     }
 
     class DrawListenerProxy implements InvocationHandler {
