@@ -41,6 +41,7 @@ endif #} JAVAFILES
 ifdef ANDROID_APK_NAME #{
 _ANDROID_RES_FLAG := -S $(or $(ANDROID_RES_DIR),res)
 _ANDROID_ASSETS_FLAG := $(addprefix -A ,$(ANDROID_ASSETS_DIR))
+_ANDROID_CLASSPATH_FLAG := $(addprefix -classpath ,$(subst $(NULL) ,:,$(strip $(ANDROID_EXTRA_JARS))))
 
 GENERATED_DIRS += classes
 
@@ -48,7 +49,9 @@ classes.dex: $(call mkdir_deps,classes)
 classes.dex: R.java
 classes.dex: $(ANDROID_APK_NAME).ap_
 classes.dex: $(JAVAFILES)
-	$(JAVAC) $(JAVAC_FLAGS) -d classes $(filter %.java,$^)
+	$(JAVAC) $(JAVAC_FLAGS)\
+		$(_ANDROID_CLASSPATH_FLAG)\
+		-d classes $(filter %.java,$^)
 	$(DX) --dex --output=$@ classes $(ANDROID_EXTRA_JARS)
 
 # R.java and $(ANDROID_APK_NAME).ap_ are both produced by aapt.  To
@@ -84,9 +87,6 @@ GARBAGE += \
   $(NULL)
 
 JAVA_CLASSPATH := $(ANDROID_SDK)/android.jar
-ifdef ANDROID_EXTRA_JARS #{
-JAVA_CLASSPATH := $(JAVA_CLASSPATH):$(subst $(NULL) ,:,$(strip $(ANDROID_EXTRA_JARS)))
-endif #} ANDROID_EXTRA_JARS
 
 # Include Android specific java flags, instead of what's in rules.mk.
 include $(topsrcdir)/config/android-common.mk

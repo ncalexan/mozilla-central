@@ -10,6 +10,11 @@ ANDROID_APK_NAME := robocop-debug
 
 ANDROID_EXTRA_JARS += \
   $(srcdir)/robotium-solo-4.3.jar \
+  robocop-harness.jar \
+  $(NULL)
+
+ANDROID_RESFILES = \
+  res/values/strings.xml \
   $(NULL)
 
 ANDROID_ASSETS_DIR := $(TESTPATH)/assets
@@ -30,6 +35,9 @@ robocop-harness_JAVAFILES := \
   RoboCopException.java \
   RobocopUtils.java \
   PaintedSurface.java \
+  $(NULL)
+robocop-harness_EXTRA_JARS := \
+  $(srcdir)/robotium-solo-4.2.jar \
   $(NULL)
 robocop-harness_JAVAC_FLAGS := -Xlint:all,-cast,-rawtypes,-serial,-unchecked
 

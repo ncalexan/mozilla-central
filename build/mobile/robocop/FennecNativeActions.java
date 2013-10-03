@@ -1,9 +1,8 @@
-#filter substitution
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package @ANDROID_PACKAGE_NAME@;
+package org.mozilla.gecko.robocop;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,7 +27,7 @@ import android.view.ViewConfiguration;
 
 import com.jayway.android.robotium.solo.Solo;
 
-import static @ANDROID_PACKAGE_NAME@.FennecNativeDriver.LogLevel;
+import static org.mozilla.gecko.robocop.FennecNativeDriver.LogLevel;
 
 public class FennecNativeActions implements Actions {
     private Solo mSolo;
