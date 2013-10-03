@@ -1,0 +1,106 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+PP_TARGETS += manifest
+manifest := $(srcdir)/AndroidManifest.xml.in
+manifest_FLAGS += \
+  -DANDROID_ROBOCOP_TARGET_PACKAGE_NAME="$(ANDROID_PACKAGE_NAME)" \
+  -DANDROID_ROBOCOP_TEST_PACKAGE_NAME="$(ANDROID_PACKAGE_NAME).robocop" \
+  -DANDROID_ROBOCOP_APP_DISPLAYNAME="$(MOZ_APP_DISPLAYNAME) Robocop Tests" \
+  $(NULL)
+
+GARBAGE += \
+  AndroidManifest.xml \
+  $(NULL)
+
+PP_TARGETS += constants
+constants := $(srcdir)/src/Constants.java.in
+constants_PATH := $(CURDIR)/src
+constants_FLAGS += \
+  -DANDROID_PACKAGE_NAME="$(ANDROID_PACKAGE_NAME)" \
+  $(NULL)
+
+GARBAGE += \
+  Constants.java \
+  $(NULL)
+
+ANDROID_APK_NAME := robocop-debug
+
+ANDROID_EXTRA_JARS += \
+  $(srcdir)/robotium-solo-4.2.jar \
+  $(DEPTH)/build/mobile/robocop/robocop-harness.jar \
+  $(NULL)
+
+ANDROID_RESFILES = \
+  res/values/strings.xml \
+  $(NULL)
+
+ANDROID_ASSETS_DIR := $(srcdir)/assets
+
+JAVAFILES := \
+  src/AboutHomeTest.java \
+  src/BaseTest.java \
+  src/Constants.java \
+  src/ContentContextMenuTest.java \
+  src/ContentProviderTest.java \
+  src/DatabaseHelper.java \
+  src/JavascriptTest.java \
+  src/MotionEventHelper.java \
+  src/MotionEventReplayer.java \
+  src/PixelTest.java \
+  src/StringHelper.java \
+  src/testAboutPage.java \
+  src/testAddSearchEngine.java \
+  src/testAddonManager.java \
+  src/testAwesomebar.java \
+  src/testAwesomebarSwipes.java \
+  src/testAxisLocking.java \
+  src/testBookmark.java \
+  src/testBookmarkKeyword.java \
+  src/testBookmarklets.java \
+  src/testBrowserProvider.java \
+  src/testBrowserProviderPerf.java \
+  src/testBrowserSearchVisibility.java \
+  src/testCheck.java \
+  src/testCheck2.java \
+  src/testClearPrivateData.java \
+  src/testDeviceSearchEngine.java \
+  src/testDistribution.java \
+  src/testDoorHanger.java \
+  src/testFindInPage.java \
+  src/testFlingCorrectness.java \
+  src/testFormHistory.java \
+  src/testHistory.java \
+  src/testImportFromAndroid.java \
+  src/testInputUrlBar.java \
+  src/testJNI.java \
+  src/testJarReader.java \
+  src/testLinkContextMenu.java \
+  src/testLoad.java \
+  src/testMailToContextMenu.java \
+  src/testMasterPassword.java \
+  src/testNewTab.java \
+  src/testOrderedBroadcast.java \
+  src/testOverscroll.java \
+  src/testPan.java \
+  src/testPanCorrectness.java \
+  src/testPasswordEncrypt.java \
+  src/testPasswordProvider.java \
+  src/testPermissions.java \
+  src/testPictureLinkContextMenu.java \
+  src/testPrefsObserver.java \
+  src/testSearchSuggestions.java \
+  src/testSettingsMenuItems.java \
+  src/testShareLink.java \
+  src/testSharedPreferences.java \
+  src/testSystemPages.java \
+  src/testTabHistory.java \
+  src/testThumbnails.java \
+  src/testVkbOverlap.java \
+  src/test_bug720538.java \
+  $(NULL)
+
+include $(topsrcdir)/config/rules.mk
+
+tools:: $(ANDROID_APK_NAME).apk

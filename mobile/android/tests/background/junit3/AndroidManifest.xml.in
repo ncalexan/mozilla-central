@@ -19,7 +19,6 @@
         <uses-library android:name="android.test.runner" />
     </application>
 
-
     <instrumentation
         android:label="@string/app_name"
         android:name="android.test.InstrumentationTestRunner"
