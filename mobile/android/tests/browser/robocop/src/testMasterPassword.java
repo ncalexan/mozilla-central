@@ -1,7 +1,6 @@
-#filter substitution
-package @ANDROID_PACKAGE_NAME@.tests;
+package org.mozilla.gecko.robocop.tests;
 
-import @ANDROID_PACKAGE_NAME@.*;
+import org.mozilla.gecko.robocop.*;
 
 /* This patch tests the Master Password feature first by enabling the password,
 then testing it on a login page and finally disabling the password */

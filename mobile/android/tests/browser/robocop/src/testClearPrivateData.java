@@ -1,7 +1,6 @@
-#filter substitution
-package @ANDROID_PACKAGE_NAME@.tests;
+package org.mozilla.gecko.robocop.tests;
 
-import @ANDROID_PACKAGE_NAME@.*;
+import org.mozilla.gecko.robocop.*;
 import java.util.ArrayList;
 
 public class testClearPrivateData extends PixelTest {

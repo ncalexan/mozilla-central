@@ -1,5 +1,4 @@
-#filter substitution
-package @ANDROID_PACKAGE_NAME@.tests;
+package org.mozilla.gecko.robocop.tests;
 
 import android.app.Instrumentation;
 import android.os.SystemClock;

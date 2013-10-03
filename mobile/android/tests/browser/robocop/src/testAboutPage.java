@@ -1,7 +1,6 @@
-#filter substitution
-package @ANDROID_PACKAGE_NAME@.tests;
+package org.mozilla.gecko.robocop.tests;
 
-import @ANDROID_PACKAGE_NAME@.*;
+import org.mozilla.gecko.robocop.*;
 
 /* Tests related to the about: page:
  *  - check that about: loads from the URL bar

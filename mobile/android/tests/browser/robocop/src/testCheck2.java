@@ -1,5 +1,4 @@
-#filter substitution
-package @ANDROID_PACKAGE_NAME@.tests;
+package org.mozilla.gecko.robocop.tests;
 
 public class testCheck2 extends PixelTest {
     @Override

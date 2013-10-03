@@ -1,9 +1,8 @@
-#filter substitution
-package @ANDROID_PACKAGE_NAME@.tests;
+package org.mozilla.gecko.robocop.tests;
 
 import com.jayway.android.robotium.solo.Condition;
 import com.jayway.android.robotium.solo.Solo;
-import @ANDROID_PACKAGE_NAME@.*;
+import org.mozilla.gecko.robocop.*;
 
 import android.app.Activity;
 import android.app.Instrumentation;

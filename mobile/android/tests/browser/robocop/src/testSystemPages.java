@@ -1,7 +1,6 @@
-#filter substitution
-package @ANDROID_PACKAGE_NAME@.tests;
+package org.mozilla.gecko.robocop.tests;
 
-import @ANDROID_PACKAGE_NAME@.*;
+import org.mozilla.gecko.robocop.*;
 
 /** This patch tests the System Pages first by loading system pages from
  *  the awesome bar and then from Firefox menu 

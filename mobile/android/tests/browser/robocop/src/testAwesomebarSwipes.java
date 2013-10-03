@@ -1,5 +1,4 @@
-#filter substitution
-package @ANDROID_PACKAGE_NAME@.tests;
+package org.mozilla.gecko.robocop.tests;
 
 import com.jayway.android.robotium.solo.Solo;
 
@@ -7,7 +6,7 @@ import android.widget.ListView;
 import android.widget.TabWidget;
 import android.support.v4.view.ViewPager;
 
-import @ANDROID_PACKAGE_NAME@.*;
+import org.mozilla.gecko.robocop.*;
 
 /* Tests swiping between tabs on the awesome bar and other basic
    awesome bar tab selections.
